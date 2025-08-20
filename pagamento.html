@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Finalizar pedido</title>
+  <style>
+    :root{
+      --bg:#f6f6f6;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --section:#f3f4f6;
+      --action:#1f2937;
+      --primary:#111111;
+      --pix:#18b5a6;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      line-height:1.35;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .appbar{
+      position:sticky;top:0;z-index:10;
+      display:flex;align-items:center;gap:.5rem;
+      height:56px;padding:0 16px;
+      background:#fff;border-bottom:1px solid var(--border);
+    }
+    .back{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:28px;height:28px;border-radius:8px;
+      cursor:pointer;
+    }
+    .appbar h1{
+      font-size:20px;margin:0;font-weight:700;
+    }
+    .page{
+      padding:12px 16px 220px;
+      max-width:760px;margin:0 auto;
+    }
+    .deliver-to{
+      background:var(--card);border-radius:12px;padding:20px 16px;
+      display:grid;grid-template-columns:1fr auto;gap:10px 12px;
+      border:1px solid var(--border);
+    }
+    .label{color:var(--muted);font-size:16px}
+    .name{font-size:24px;font-weight:800}
+    .phone{font-size:16px;color:#2b2b2b}
+    .btn-outline{
+      align-self:start;
+      padding:10px 18px;
+      border:2px solid var(--action);
+      color:var(--action);
+      background:#fff;border-radius:12px;
+      font-weight:700;font-size:18px;
+      letter-spacing:.2px;
+      cursor:pointer;
+    }
+    .section{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      margin-top:14px;
+      overflow:hidden;
+    }
+    .section-head{
+      background:var(--section);
+      padding:16px;
+      font-size:22px;font-weight:800;
+    }
+    .address-card{
+      display:grid;grid-template-columns:1fr auto;gap:12px;
+      padding:16px;border-top:1px solid var(--border);
+      background:#fff;
+    }
+    .address-text{
+      font-size:20px;font-weight:600;
+      color:#394150;
+    }
+    .eta{
+      display:flex;align-items:center;gap:10px;
+      padding:12px 16px;border-top:1px solid var(--border);
+      color:#374151;font-size:18px;font-weight:600;
+      background:#fff;
+    }
+    .pay-row{
+      display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+      gap:12px;padding:16px;border-top:1px solid var(--border);
+      background:#fff;
+    }
+    .pay-title{font-size:22px;font-weight:800;margin:0 0 4px}
+    .pay-sub{font-size:18px;color:#3a3a3a}
+    .pay-safe{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;border-top:1px solid var(--border);
+      color:var(--muted);font-size:18px;background:#fff;
+    }
+    .coupon{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      margin-top:14px;
+      padding:18px 16px;
+      display:flex;justify-content:space-between;align-items:center;
+      font-size:22px;font-weight:800;
+    }
+    .bottom{
+      position:fixed;left:0;right:0;bottom:0;z-index:20;
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 30%, rgba(246,246,246,1) 100%);
+    }
+    .btn-primary{
+      width:100%;
+      background:var(--primary);
+      color:#fff;border:0;border-radius:16px;
+      height:56px;font-size:22px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;
+      letter-spacing:.2px;
+      box-shadow:0 3px 8px rgba(0,0,0,.12);
+    }
+    .icon{display:inline-block;vertical-align:middle}
+    .icon.chevron{width:22px;height:22px}
+    .icon.clock{width:22px;height:22px}
+    .icon.lock{width:22px;height:22px}
+    .icon.pix{width:36px;height:36px}
+    .icon.caret{width:18px;height:18px;transform:rotate(180deg);}
+    @media (min-width:768px){
+      .page{padding-left:24px;padding-right:24px}
+    }
+
+    /* Modal estilo iFood */
+    #paymentModal{
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.5);
+      justify-content:center;
+      align-items:center;
+      z-index:50;
+      transition:all 0.3s ease;
+    }
+    #paymentModal .modal-content{
+      background:#fff;
+      border-radius:24px;
+      max-width:400px;
+      width:90%;
+      padding:24px;
+      text-align:center;
+      position:relative;
+      transform:scale(0.8);
+      transition:transform 0.3s ease, opacity 0.3s ease;
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);
+      opacity:0;
+    }
+    #paymentModal h3{
+      margin:0 0 16px;
+      font-size:22px;
+      font-weight:800;
+      color:#111827;
+    }
+    #paymentModal p{
+      margin:0 0 24px;
+      font-size:16px;
+      color:#6b7280;
+    }
+    #paymentModal button{
+      border:none;
+      border-radius:12px;
+      padding:16px 0;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      width:100%;
+      margin-bottom:16px;
+      transition:all 0.2s ease;
+    }
+    #choosePix{background:#00c4a7;color:white;}
+    #chooseCard{background:#fff;color:#111827;border:1px solid #111827;}
+    #closeModal{
+      position:absolute; top:12px; right:12px;
+      font-size:24px; background:none; border:none; cursor:pointer;
+      color:#6b7280;
+    }
+    #pixQRCode {margin-top:20px; text-align:center;}
+    #pixQRCode img {max-width:200px; margin-bottom:10px;}
+    #pixQRCode p {word-break:break-all; font-size:14px; color:#111;}
+
+    /* Estilo de formulário cartão tipo iFood */
+    .field-group{
+      position:relative;
+      margin-bottom:18px;
+    }
+    .field-input{
+      width:100%;
+      padding:16px 12px 16px 12px;
+      font-size:16px;
+      border-radius:12px;
+      border:1px solid #d1d5db;
+      outline:none;
+      background:#fff;
+    }
+    .field-input:focus{
+      border-color:#111827;
+    }
+    .field-label{
+      position:absolute;
+      top:50%;
+      left:12px;
+      transform:translateY(-50%);
+      color:#9ca3af;
+      font-size:16px;
+      font-weight:500;
+      pointer-events:none;
+      transition:0.2s ease all;
+      background:#fff;
+      padding:0 4px;
+    }
+    .field-input:focus + .field-label,
+    .field-input:not(:placeholder-shown) + .field-label{
+      top:-8px;
+      left:8px;
+      font-size:12px;
+      color:#111827;
+    }
+    .field-row{
+      display:flex;
+      gap:12px;
+    }
+    #confirmCard{
+      margin-top:12px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:800;
+      font-size:18px;
+      border:none;
+      border-radius:12px;
+      padding:14px 0;
+      width:100%;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AppBar -->
+  <div class="appbar">
+    <span class="back" aria-label="Voltar" onclick="window.location.href='cadastro.html'">
+      <svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </span>
+    <h1>Finalizar pedido</h1>
+  </div>
+
+  <main class="page">
+
+    <section class="deliver-to" aria-label="Dados do destinatário">
+      <div class="label">Este pedido será entregue a:</div>
+      <button class="btn-outline">Trocar</button>
+      <div class="name"></div>
+      <div class="phone"></div>
+    </section>
+
+    <section class="section" aria-label="Endereço de entrega">
+      <div class="section-head">Endereço de entrega</div>
+      <div class="address-card">
+        <div class="address-text"></div>
+        <button class="btn-outline">Trocar</button>
+      </div>
+      <div class="eta">
+        <svg class="icon clock" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3 2"></path>
+        </svg>
+        Entre 20 - 50 min
+      </div>
+    </section>
+
+    <section class="section" aria-label="Forma de pagamento">
+      <div class="section-head">Forma de pagamento</div>
+
+      <div class="pay-row">
+        <svg class="icon pix" viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#1cc0b0"/>
+              <stop offset="1" stop-color="#0fae9c"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#g)" d="M21.2 10.5c3.8-3.8 10-3.8 13.8 0l18.5 18.5c3.8 3.8 3.8 10 0 13.8L35 61.3c-3.8 3.8-10 3.8-13.8 0L2.8 43c-3.8-3.8-3.8-10 0-13.8L21.2 10.5z"/>
+          <path fill="#ffffff" opacity=".1" d="M27 17c2.2-2.2 5.8-2.2 8 0l12 12c2.2 2.2 2.2 5.8 0 8l-12 12c-2.2 2.2-5.8 2.2-8 0l-12-12c-2.2-2.2-2.2-5.8 0-8l12-12z"/>
+        </svg>
+
+        <div>
+          <div class="pay-title">Pix</div>
+          <div class="pay-sub">Pagamento com Pix online</div>
+        </div>
+
+        <button class="btn-outline">Trocar</button>
+      </div>
+
+      <div class="pay-safe">
+        <svg class="icon lock" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+          <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
+        </svg>
+        Seguro pela Tuna Pagamentos
+      </div>
+
+      <!-- Formulário Pix -->
+      <div id="pixForm" style="display:block; margin-top:20px; padding:20px; background:#f9f9f9; border-radius:12px; text-align:center;">
+        <div style="font-size:16px; font-weight:500; color:#111;">Pagamento via Pix será processado automaticamente.</div>
+        <div id="pixQRCode"></div>
+      </div>
+
+      <!-- Formulário Cartão -->
+      <div id="cardForm" style="display:none; margin-top:20px; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); transition: all 0.3s ease;">
+        <div class="field-group">
+          <input class="field-input" type="text" id="cardNumber" placeholder=" ">
+          <label class="field-label" for="cardNumber">Número do cartão</label>
+        </div>
+        <div class="field-group">
+          <input class="field-input" type="text" id="cardName" placeholder=" ">
+          <label class="field-label" for="cardName">Nome no cartão</label>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <input class="field-input" type="text" id="cardExpiry" placeholder=" ">
+            <label class="field-label" for="cardExpiry">Validade</label>
+          </div>
+          <div class="field-group">
+            <input class="field-input" type="text" id="cardCVC" placeholder=" ">
+            <label class="field-label" for="cardCVC">CVC</label>
+          </div>
+        </div>
+        <button id="confirmCard">Salvar cartão</button>
+      </div>
+
+    </section>
+
+    <section class="coupon" aria-label="Cupom">
+      <span>Cupom</span>
+      <svg class="icon caret" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 15l6-6 6 6"/>
+      </svg>
+    </section>
+
+  </main>
+
+  <div class="bottom">
+    <button class="btn-primary">Ir para o pagamento</button>
+  </div>
+
+  <!-- Modal forma de pagamento -->
+  <div id="paymentModal">
+    <div class="modal-content">
+      <h3>Escolha a forma de pagamento</h3>
+      <p>Você poderá alternar entre Pix e Cartão antes de finalizar o pedido.</p>
+      <button id="choosePix">Pix</button>
+      <button id="chooseCard">Cartão</button>
+      <button id="closeModal">×</button>
+    </div>
+  </div>
+
+<script>
+const STORAGE_CART = 'sacola';
+const STORAGE_USER = 'userData';
+const STORAGE_ADDRESS = 'addressData';
+
+const cart = JSON.parse(localStorage.getItem(STORAGE_CART) || '[]');
+const user = JSON.parse(localStorage.getItem(STORAGE_USER) || '{}');
+const address = JSON.parse(localStorage.getItem(STORAGE_ADDRESS) || '{}');
+
+// Preencher dados do usuário
+const deliverSection = document.querySelector('.deliver-to');
+if(deliverSection){
+  deliverSection.querySelector('.name').textContent = user.name || '';
+  deliverSection.querySelector('.phone').textContent = user.phone || '';
+}
+
+// Preencher endereço
+const addressCard = document.querySelector('.address-card .address-text');
+if(addressCard){
+  const addrText = `${address.rua || ''}, ${address.numero || ''},<br>`+
+                   `${address.bairro || ''}, ${address.cidade || ''} - ${address.estado || ''}<br>`+
+                   `${address.cep || ''}`;
+  addressCard.innerHTML = addrText;
+}
+
+// Calcular subtotal
+let subtotal = 0;
+cart.forEach(item=>{
+  const somaExtras = (item.extras && item.extras.length>0)
+    ? item.extras.reduce((acc, ex)=>acc + (Number(ex.preco||0)*Number(ex.quantidade||0)),0)
+    : 0;
+  subtotal += (Number(item.preco||0)+somaExtras)*Number(item.quantidade||1);
+});
+
+// Botões trocar
+document.querySelectorAll('.deliver-to .btn-outline, .address-card .btn-outline').forEach(btn=>{
+  btn.addEventListener('click', ()=>window.location.href='cadastro.html');
+});
+
+// Modal forma de pagamento
+const payChangeBtn = document.querySelector('.pay-row .btn-outline');
+const modal = document.getElementById('paymentModal');
+const modalContent = modal.querySelector('.modal-content');
+const pixForm = document.getElementById('pixForm');
+const cardForm = document.getElementById('cardForm');
+const closeModal = document.getElementById('closeModal');
+const payTitle = document.querySelector('.pay-row .pay-title');
+const paySub = document.querySelector('.pay-row .pay-sub');
+
+if(payChangeBtn) payChangeBtn.addEventListener('click', ()=>{
+  modal.style.display='flex';
+  setTimeout(()=>{modalContent.style.transform='scale(1)'; modalContent.style.opacity='1';},10);
+});
+closeModal.addEventListener('click', ()=>{
+  modalContent.style.transform='scale(0.8)'; modalContent.style.opacity='0';
+  setTimeout(()=>modal.style.display='none',300);
+});
+document.getElementById('choosePix').addEventListener('click', ()=>{
+  pixForm.style.display='block';
+  cardForm.style.display='none';
+  payTitle.textContent='Pix';
+  paySub.textContent='Pagamento com Pix online';
+  closeModal.click();
+});
+document.getElementById('chooseCard').addEventListener('click', ()=>{
+  pixForm.style.display='none';
+  cardForm.style.display='block';
+  payTitle.textContent='Cartão';
+  paySub.textContent='Pagamento com Cartão online';
+  closeModal.click();
+});
+
+// Salvar cartão
+document.getElementById('confirmCard').addEventListener('click', ()=>{
+  const cardNumber=document.getElementById('cardNumber').value;
+  const cardName=document.getElementById('cardName').value;
+  const cardExpiry=document.getElementById('cardExpiry').value;
+  const cardCVC=document.getElementById('cardCVC').value;
+  if(!cardNumber || !cardName || !cardExpiry || !cardCVC){
+    alert('Preencha todos os campos do cartão!');
+    return;
+  }
+  alert('Cartão salvo com sucesso!');
+});
+
+// Botão finalizar pagamento
+document.querySelector('.bottom .btn-primary').addEventListener('click', async ()=>{
+  if(cart.length===0){
+    alert('Seu carrinho está vazio!');
+    return;
+  }
+
+  // Salvar subtotal no localStorage
+  localStorage.setItem('pedidoValor', subtotal);
+
+  if(payTitle.textContent==='Pix'){
+    // Chamar backend para gerar chave PIX
+    try{
+      const response = await fetch('/gerar-pix', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({valor: subtotal})
+      });
+      const data = await response.json();
+      if(data.qrCode && data.chave){
+        const pixDiv = document.getElementById('pixQRCode');
+        pixDiv.innerHTML = `<img src="${data.qrCode}" alt="QR Code Pix"><p>${data.chave}</p>`;
+        alert('Chave Pix gerada! Confira abaixo o QR Code.');
+      } else {
+        alert('Erro ao gerar Pix. Tente novamente.');
+      }
+    }catch(err){
+      console.error(err);
+      alert('Erro de conexão ao gerar Pix.');
+    }
+  }else{
+    alert(`Pedido de ${subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} pronto para pagamento com cartão!`);
+  }
+});
+</script>
+</body>
+</html>

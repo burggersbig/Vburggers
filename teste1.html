@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hamburgueria Texas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #ffffff;
+      color: #333;
+    }
+    header {
+      background-color: #2d2d2d;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+    }
+    header img.logo {
+      height: 40px;
+    }
+    header .store-info {
+      font-size: 14px;
+    }
+    header .profile-icon {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+    .status {
+      background-color: #ffecec;
+      color: #d9534f;
+      text-align: center;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .cashback-banner {
+      background-color: #9b51e0;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    nav {
+      display: flex;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    nav a {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    nav a.active {
+      border-bottom: 3px solid #000;
+    }
+
+    /* container de produtos */
+    .products {
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0 15px 80px 15px;
+      justify-content: flex-start;
+    }
+
+    /* quando ativo */
+    .products.active {
+      display: flex;
+    }
+
+    /* cards (2 por linha) */
+    .product-card {
+      flex: 0 0 calc(50% - 10px);
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+
+    /* imagem quadrada */
+    .product-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 10px;
+    }
+
+    .product-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .product-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+    .product-info .price {
+      margin-top: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #000;
+    }
+    footer {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #e0e0e0;
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #fff;
+    }
+    footer a {
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 12px;
+    }
+    footer a img {
+      display: block;
+      margin: 0 auto 5px auto;
+      height: 20px;
+    }
+
+    /* --- Overlays (modals) --- */
+    /* Fundo escuro do modal */
+    #overlay-form, #overlay-form-cidade, #overlay-loading, #overlay-resultado {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Caixa central do modal */
+    #overlay-box, #overlay-box-cidade, #overlay-box-loading, #overlay-box-resultado {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    #overlay-box h2, #overlay-box-cidade h2 {
+      margin-bottom: 10px;
+    }
+
+    #overlay-box select, 
+    #overlay-box button,
+    #overlay-box-cidade select,
+    #overlay-box-cidade button {
+      margin-top: 15px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #overlay-box button,
+    #overlay-box-cidade button {
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 6px;
+    }
+
+    /* Esconder o modal de cidade inicialmente */
+    #overlay-form-cidade {
+      display: none;
+    }
+
+    /* --- Loading box styles (aparência similar ao print) --- */
+    #overlay-box-loading h1 {
+      margin: 0 0 12px 0;
+      font-size: clamp(22px, 6vw, 40px);
+      font-weight: 700;
+      color: #4a4a4a;
+    }
+    #overlay-box-loading p {
+      margin: 0;
+      margin-top: 8px;
+      font-size: 18px;
+      color: #666;
+    }
+    #overlay-box-loading p strong {
+      color: #333;
+      font-weight: 700;
+    }
+
+    /* Spinner com duas arcs (visual limpo) */
+    .loading-spinner {
+      width: 64px;
+      height: 64px;
+      margin: 28px auto 0;
+      position: relative;
+    }
+    .loading-spinner .arc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: #2f78d0;
+      animation: spin 1s linear infinite;
+      box-sizing: border-box;
+    }
+    .loading-spinner .arc.second {
+      border-top-color: #2f78d0;
+      opacity: 0.6;
+      transform: rotate(180deg);
+      animation-duration: 1.4s;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Resultado box */
+    #overlay-box-resultado h2 {
+      margin: 0 0 10px 0;
+      font-size: 22px;
+      color: #333;
+    }
+    #overlay-box-resultado p {
+      margin: 10px 0 0 0;
+      font-size: 16px;
+      color: #555;
+    }
+    #overlay-box-resultado button {
+      margin-top: 18px;
+      background: #2d2d2d;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    /* Responsividade menor */
+    @media (max-width: 420px) {
+      .product-card { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Modal do formulário Estado -->
+  <div id="overlay-form">
+    <div id="overlay-box" role="dialog" aria-modal="true" aria-labelledby="estado-title">
+      <h2 id="estado-title">Procure a loja mais próxima de você!</h2>
+      <p>Escolha seu estado:</p>
+      <select id="estado" aria-label="Selecione seu estado">
+        <option value="">Selecione</option>
+        <option value="SP">São Paulo</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="MG">Minas Gerais</option>
+        <!-- Adicione outros estados -->
+      </select>
+      <button id="btn-proximo">Próximo</button>
+    </div>
+  </div>
+
+  <!-- Modal do formulário Cidade -->
+  <div id="overlay-form-cidade">
+    <div id="overlay-box-cidade" role="dialog" aria-modal="true" aria-labelledby="cidade-title">
+      <h2 id="cidade-title">Estamos quase lá...</h2>
+      <p>Agora, selecione sua cidade:</p>
+      <select id="cidade" aria-label="Selecione sua cidade">
+        <!-- Cidades serão carregadas via JS -->
+      </select>
+      <button id="btn-procurar">Procurar loja mais próxima!</button>
+    </div>
+  </div>
+
+  <!-- Modal de carregamento (procura) -->
+  <div id="overlay-loading" style="display:none;">
+    <div id="overlay-box-loading" role="dialog" aria-modal="true">
+      <h1>Procurando a loja mais próxima...</h1>
+      <p>Procurando a loja mais próxima de você em <strong id="loading-estado-name">São Paulo</strong>...</p>
+
+      <div class="loading-spinner" aria-hidden="true">
+        <div class="arc"></div>
+        <div class="arc second"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de resultado -->
+  <div id="overlay-resultado" style="display:none;">
+    <div id="overlay-box-resultado" role="dialog" aria-modal="true">
+      <h2 id="resultado-title">Loja localizada</h2>
+      <p id="resultado-text">Localizamos uma loja a <strong id="resultado-dist">1,3 km</strong> de distância. Seu pedido será com entrega grátis.</p>
+      <button id="resultado-fechar">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Conteúdo original -->
+  <header>
+    <img src="logo-texas.png" alt="Logo Hamburgueria Texas" class="logo" />
+    <div class="store-info" aria-live="polite">
+      Abre hoje às 17h6 • Pedido mín. R$ 6,00
+    </div>
+    <div class="profile-icon" aria-hidden="true"></div>
+  </header>
+
+  <div class="status" aria-live="polite">
+    Loja fechada, abre hoje às 17h6
+  </div>
+
+  <div class="cashback-banner">
+    5% cashback - compre e ganhe na hora
+  </div>
+
+  <nav role="navigation" aria-label="Categorias de produtos">
+    <a href="#" class="active" data-categoria="promocao" role="tab" aria-selected="true" tabindex="0">Promoção</a>
+    <a href="#" data-categoria="texas" role="tab" aria-selected="false" tabindex="-1">Texas Smoker</a>
+    <a href="#" data-categoria="smash" role="tab" aria-selected="false" tabindex="-1">Smash</a>
+    <a href="#" data-categoria="lanches" role="tab" aria-selected="false" tabindex="-1">Lanches</a>
+    <a href="#" data-categoria="combos" role="tab" aria-selected="false" tabindex="-1">Combos</a>
+  </nav>
+
+<!-- PRODUTOS - Promoção -->
+<div class="products categoria-promocao active" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
+    <img src="texas-cheddar-placeholder.png" alt="Texas Cheddar" />
+    <div class="product-info">
+      <h3>Texas Cheddar</h3>
+      <p>Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho</p>
+      <div class="price">R$ 19,90</div>
+    </div>
+  </div>
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=duplo-bacon'">
+    <img src="duplo-bacon-placeholder.png" alt="Duplo Bacon" />
+    <div class="product-info">
+      <h3>Duplo Bacon</h3>
+      <p>Pão brioche, dois hambúrgueres 150g, bacon, queijo prato e molho especial</p>
+      <div class="price">R$ 24,90</div>
+    </div>
+  </div>
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=veggie-burger'">
+    <img src="veggie-placeholder.png" alt="Veggie Burger" />
+    <div class="product-info">
+      <h3>Veggie Burger</h3>
+      <p>Pão integral, hambúrguer de grão-de-bico, alface, tomate e maionese vegana</p>
+      <div class="price">R$ 21,90</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUTOS - Texas Smoker -->
+<div class="products categoria-texas" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=brisket-burger'">
+    <img src="brisket-burger-placeholder.png" alt="Brisket Burger" />
+    <div class="product-info">
+      <h3>Brisket Burger</h3>
+      <p>Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue</p>
+      <div class="price">R$ 27,90</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUTOS - Smash -->
+<div class="products categoria-smash" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
+    <img src="smash-classic-placeholder.png" alt="Smash Classic" />
+    <div class="product-info">
+      <h3>Smash Classic</h3>
+      <p>Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa</p>
+      <div class="price">R$ 18,90</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUTOS - Lanches -->
+<div class="products categoria-lanches" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
+    <img src="chicken-crispy-placeholder.png" alt="Chicken Crispy" />
+    <div class="product-info">
+      <h3>Chicken Crispy</h3>
+      <p>Pão brioche, frango empanado crocante, alface, tomate e maionese</p>
+      <div class="price">R$ 20,90</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUTOS - Combos -->
+<div class="products categoria-combos" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-classic'">
+    <img src="combo-classic-placeholder.png" alt="Combo Classic" />
+    <div class="product-info">
+      <h3>Combo Classic</h3>
+      <p>Hambúrguer clássico + batata frita + refrigerante lata</p>
+      <div class="price">R$ 29,90</div>
+    </div>
+  </div>
+</div>
+
+  <footer>
+    <a href="#"><img src="icon-home.png" alt=""><span>Início</span></a>
+    <a href="#"><img src="icon-orders.png" alt=""><span>Pedidos</span></a>
+    <a href="#"><img src="icon-promos.png" alt=""><span>Promos</span></a>
+    <a href="#"><img src="icon-cart.png" alt=""><span>Carrinho</span></a>
+  </footer>
+
+  <script>
+    // Controle de categorias
+    const navLinks = document.querySelectorAll("nav a");
+    const categorias = document.querySelectorAll(".products");
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+
+        // Atualiza tabs
+        navLinks.forEach(l => {
+          l.classList.remove("active");
+          l.setAttribute("aria-selected", "false");
+          l.setAttribute("tabindex", "-1");
+        });
+        link.classList.add("active");
+        link.setAttribute("aria-selected", "true");
+        link.setAttribute("tabindex", "0");
+        link.focus();
+
+        // Atualiza visibilidade das categorias
+        categorias.forEach(div => div.classList.remove("active"));
+        const categoria = link.getAttribute("data-categoria");
+        const divSelecionada = document.querySelector(".categoria-" + categoria);
+        if (divSelecionada) {
+          divSelecionada.classList.add("active");
+        }
+      });
+    });
+
+    // Dados de cidades por estado para exemplo
+    const cidadesPorEstado = {
+      SP: ["São Paulo", "Campinas", "Santos", "Guarulhos"],
+      RJ: ["Rio de Janeiro", "Niterói", "Petrópolis", "Volta Redonda"],
+      MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora"]
+    };
+
+    // Mapeamento para nomes completos dos estados (caso queira mostrar o nome do estado)
+    const nomesEstados = {
+      SP: "São Paulo",
+      RJ: "Rio de Janeiro",
+      MG: "Minas Gerais"
+    };
+
+    const selectEstado = document.getElementById("estado");
+    const selectCidade = document.getElementById("cidade");
+
+    const overlayEstado = document.getElementById("overlay-form");
+    const overlayCidade = document.getElementById("overlay-form-cidade");
+    const overlayLoading = document.getElementById("overlay-loading");
+    const overlayResultado = document.getElementById("overlay-resultado");
+
+    let estadoSelecionado = "";
+
+    document.getElementById("btn-proximo").addEventListener("click", () => {
+      const estado = selectEstado.value;
+      if (!estado) {
+        alert("Por favor, selecione um estado.");
+        return;
+      }
+      estadoSelecionado = estado;
+      // Limpa cidades anteriores
+      selectCidade.innerHTML = "";
+      if (cidadesPorEstado[estado]) {
+        cidadesPorEstado[estado].forEach(cidade => {
+          const option = document.createElement("option");
+          option.value = cidade;
+          option.textContent = cidade;
+          selectCidade.appendChild(option);
+        });
+      }
+      // Mostra modal cidade e esconde modal estado
+      overlayEstado.style.display = "none";
+      overlayCidade.style.display = "flex";
+    });
+
+    document.getElementById("btn-procurar").addEventListener("click", () => {
+      const cidade = selectCidade.value;
+      if (!cidade) {
+        alert("Por favor, selecione uma cidade.");
+        return;
+      }
+      // Esconde modal cidade, mostra loading
+      overlayCidade.style.display = "none";
+      overlayLoading.style.display = "flex";
+
+      // Atualiza texto com nome do estado selecionado
+      document.getElementById("loading-estado-name").textContent = nomesEstados[estadoSelecionado] || estadoSelecionado;
+
+      // Simula busca (3 segundos)
+      setTimeout(() => {
+        overlayLoading.style.display = "none";
+        overlayResultado.style.display = "flex";
+      }, 3000);
+    });
+
+    document.getElementById("resultado-fechar").addEventListener("click", () => {
+      overlayResultado.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>

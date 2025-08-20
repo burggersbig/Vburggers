@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Página - Carrinho / Identificação</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --muted: #9aa0a6;
+      --title: #253240;
+      --accent-yellow: #f1b322;
+      --green: #2fb06a;
+      --red: #ff5c5c;
+      --border: #e6e9ed;
+      --input-bg: #fafafa;
+      --radius: 14px;
+      --container-w: 420px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--title);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      justify-content:center;
+      padding:18px 12px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:var(--container-w);
+    }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+      margin-bottom:18px;
+      border:1px solid rgba(0,0,0,0.02);
+    }
+
+    .cart-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+    }
+    .cart-header h2{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      color:var(--title);
+    }
+    .badge{
+      background:var(--accent-yellow);
+      color:#fff;
+      font-weight:700;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+    }
+
+    .product-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:8px 2px;
+    }
+    .thumb{
+      width:64px;
+      height:64px;
+      object-fit:cover;
+      border-radius:8px;
+      flex-shrink:0;
+      border:1px solid var(--border);
+    }
+    .product-info{
+      flex:1;
+      min-width:0;
+    }
+    .product-title{
+      font-weight:700;
+      font-size:15px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .promo{
+      background:#fff1d6;
+      color:#b36b00;
+      font-size:11px;
+      font-weight:700;
+      padding:2px 6px;
+      border-radius:6px;
+      border:1px solid rgba(0,0,0,0.03);
+    }
+    .product-desc{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .extras-line{
+      margin-top:6px;
+      color:#666;
+      font-size:13px;
+    }
+    .qty-control{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+    }
+    .qty-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 8px;
+    }
+    .qty-pill button{
+      width:28px;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:6px;
+      border:0;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      background:transparent;
+    }
+    .qty-pill .minus{ color:var(--red) }
+    .qty-pill .plus{ color:var(--green) }
+    .qty-count{ min-width:22px; text-align:center; font-weight:700 }
+
+    .item-total {
+      font-weight:700;
+      margin-left:12px;
+      white-space:nowrap;
+    }
+
+    .remove-small {
+      background:transparent;
+      border:0;
+      color:#999;
+      cursor:pointer;
+      margin-left:8px;
+      font-size:18px;
+    }
+
+    hr{
+      border:0;
+      height:1px;
+      background:var(--border);
+      margin:12px 0;
+      border-radius:4px;
+    }
+
+    /* Frete grátis com radio e texto no canto direito */
+    .frete-gratis {
+      background:#e6f7ec;
+      color:var(--green);
+      border:1px solid #c3e6cd;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:8px;
+      margin-bottom:4px;
+      justify-content: space-between;
+    }
+    .frete-gratis::before{
+      content:"🚚";
+      font-size:18px;
+    }
+
+    /* Radio customizado */
+    .frete-radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      cursor: pointer;
+    }
+    .frete-radio-label input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      margin: 0;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .frete-radio-label input[type="radio"]:checked {
+      background-color: var(--green);
+      border-color: var(--green);
+    }
+    .frete-radio-label input[type="radio"]:checked::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+    .frete-radio-text {
+      user-select: none;
+    }
+
+    .frete-tempo {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--green);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .totals .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:8px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .totals .row.total{
+      margin-top:6px;
+      font-weight:700;
+      color:var(--title);
+      font-size:16px;
+    }
+    .totals .row .value{ font-weight:700 }
+
+    .form h3{
+      margin:0 0 14px 0;
+      font-size:16px;
+      font-weight:700;
+    }
+    label.field{
+      display:block;
+      margin-bottom:6px;
+      color:var(--title);
+      font-weight:600;
+      font-size:14px;
+    }
+    .input{
+      width:100%;
+      padding:14px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:var(--input-bg);
+      font-size:15px;
+      color:var(--title);
+      outline:none;
+      margin-bottom:12px;
+    }
+    .checkbox-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .checkbox-row input[type="checkbox"]{ width:18px; height:18px; }
+
+    @media (max-width:420px){
+      :root{ --container-w: 100% }
+      .thumb{ width:60px; height:60px }
+    }
+  /* Estilos do contêiner Pagamento Pix */
+  .pix-logo-container {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  .pix-logo {
+    max-width: 140px;
+    height: auto;
+    border: 3.5px solid #dba900;
+    border-radius: 6px;
+    padding: 12px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: #fff;
+  }
+
+  .btn-pix {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto 14px auto;
+    padding: 12px 16px;
+    background: #dba900;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-pix:hover {
+    background: #b88700;
+  }
+
+  .pix-info {
+    color: #777;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- CARRINHO -->
+    <div class="card">
+      <div class="cart-header">
+        <h2>Seu carrinho</h2>
+        <div class="badge" id="cartBadge">0</div>
+      </div>
+
+      <!-- Container dinâmico para os itens -->
+      <div id="cartItems"></div>
+
+      <hr>
+
+      <div class="totals">
+        <div class="row"><span>Subtotal</span><strong class="value" id="subtotal">R$ 0,00</strong></div>
+        <div class="row"><span>Frete</span><strong class="value">-</strong></div>
+        <div class="row total"><span>Total</span><strong class="value" id="total">R$ 0,00</strong></div>
+      </div>
+    </div>
+
+    <!-- IDENTIFICAÇÃO -->
+    <div class="card form">
+      <h3>Identificação</h3>
+      <label class="field" for="email">E-mail</label>
+      <input class="input" type="email" id="email" placeholder="email@email.com">
+      <label class="checkbox-row">
+        <input type="checkbox" id="noEmail">
+        <span>Não tenho e-mail</span>
+      </label>
+      <label class="field" for="phone">Telefone</label>
+      <input class="input" type="tel" id="phone" placeholder="(99) 99999-9999">
+      <label class="field" for="name">Nome completo</label>
+      <input class="input" type="text" id="name" placeholder="Nome e Sobrenome">
+      <label class="field" for="cpf">CPF/CNPJ</label>
+      <input class="input" type="text" id="cpf" placeholder="123.456.789-12">
+    </div>
+
+    <!-- ENDEREÇO -->
+    <div class="card form" id="addressForm">
+      <h3>Endereço</h3>
+      <label class="field" for="cep">CEP</label>
+      <input class="input" type="text" id="cep" placeholder="00000-000">
+      <div id="addressFields" style="display:none;">
+        <label class="field" for="rua">Rua</label>
+        <input class="input" type="text" id="rua" readonly>
+        <label class="field" for="bairro">Bairro</label>
+        <input class="input" type="text" id="bairro" readonly>
+        <label class="field" for="cidade">Cidade</label>
+        <input class="input" type="text" id="cidade" readonly>
+        <label class="field" for="estado">Estado</label>
+        <input class="input" type="text" id="estado" readonly>
+        <label class="field" for="numero">Número</label>
+        <input class="input" type="text" id="numero" placeholder="Número">
+        <label class="field" for="complemento">Complemento</label>
+        <input class="input" type="text" id="complemento" placeholder="Apto, bloco, etc.">
+
+        <!-- Caixa frete grátis movida para cá -->
+        <div class="frete-gratis" id="freteGratis" style="display:none;">
+          <label class="frete-radio-label" for="freteGratisRadio">
+            <input type="radio" id="freteGratisRadio" name="frete" checked disabled>
+            <span class="frete-radio-text">Frete grátis para sua região!</span>
+          </label>
+          <span class="frete-tempo">20 a 35 minutos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGAMENTO -->
+    <div class="card form" id="paymentForm" style="margin-top: 20px; display:none;">
+      <h3>Pagamento</h3>
+      <div style="text-align: center; font-size: 48px; margin: 20px 0;">
+        &#128179; <!-- Emoji símbolo dinheiro pode ser substituído por ícone Pix -->
+        <span style="font-weight: bold; font-size: 48px; color: #12B886;">PIX</span>
+      </div>
+      <div style="text-align: center;">
+        <button id="btnGerarPix" style="
+          background-color: #12B886;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          font-size: 16px;
+          border-radius: 6px;
+          cursor: pointer;
+        ">Gerar Chave Pix</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // chave usada pela sua página pedido.html
+  const STORAGE_KEY = 'sacola';
+
+  // Formatação moeda BRL
+  function formatBRL(v) {
+    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  // Lê a sacola do localStorage (retorna array)
+  function loadSacola() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error('Erro ao ler sacola do localStorage', e);
+      return [];
+    }
+  }
+
+  // Salva a sacola no localStorage
+  function saveSacola(arr) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    } catch (e) {
+      console.error('Erro ao salvar sacola no localStorage', e);
+    }
+  }
+
+  // Cria elemento HTML para cada item do carrinho
+  function createCartItemElement(item, index) {
+    const somaExtras = (item.extras && item.extras.length > 0)
+      ? item.extras.reduce((acc, ex) => acc + (Number(ex.preco || 0) * Number(ex.quantidade || 0)), 0)
+      : 0;
+    const quantidade = Number(item.quantidade || 1);
+    const itemTotal = (Number(item.preco || 0) + somaExtras) * quantidade;
+
+    const div = document.createElement('div');
+    div.classList.add('product-row');
+
+    let extrasText = '';
+    if (item.extras && item.extras.length > 0) {
+      extrasText = item.extras.map(e => `${e.nome} x${e.quantidade}`).join(' · ');
+    }
+
+    div.innerHTML = `
+      <img class="thumb" src="${item.img || 'product.jpg'}" alt="${(item.nome || item.name) || 'Produto'}">
+      <div class="product-info">
+        <div class="product-title">
+          ${(item.nome || item.name) || 'Produto'}
+          ${item.promo ? '<span class="promo">PROMOÇÃO</span>' : ''}
+        </div>
+        <div class="product-desc">${item.descricao || item.desc || ''}</div>
+        ${extrasText ? `<div class="extras-line">Adicionais: ${extrasText}</div>` : ''}
+      </div>
+      <div class="qty-control">
+        <div style="display:flex; align-items:center;">
+          <div class="qty-pill">
+            <button class="minus" data-index="${index}" aria-label="Diminuir">−</button>
+            <div class="qty-count" id="qty-${index}">${quantidade}</div>
+            <button class="plus" data-index="${index}" aria-label="Aumentar">+</button>
+          </div>
+          <div class="item-total" id="item-total-${index}">${formatBRL(itemTotal)}</div>
+          <button class="remove-small" data-index="${index}" title="Remover item">×</button>
+        </div>
+      </div>
+    `;
+    return div;
+  }
+
+  // Atualiza exibição do carrinho
+  function refreshCart() {
+    const sacola = loadSacola();
+    const cartItemsEl = document.getElementById('cartItems');
+    cartItemsEl.innerHTML = '';
+
+    if (!sacola || sacola.length === 0) {
+      cartItemsEl.innerHTML = '<div style="padding:12px; color:#666">Sua sacola está vazia.</div>';
+    }
+
+    let subtotal = 0;
+    let totalQty = 0;
+
+    sacola.forEach((item, idx) => {
+      cartItemsEl.appendChild(createCartItemElement(item, idx));
+      const somaExtras = (item.extras && item.extras.length > 0)
+        ? item.extras.reduce((acc, ex) => acc + (Number(ex.preco || 0) * Number(ex.quantidade || 0)), 0)
+        : 0;
+      const quantidade = Number(item.quantidade || 1);
+      subtotal += (Number(item.preco || 0) + somaExtras) * quantidade;
+      totalQty += quantidade;
+    });
+
+    document.getElementById('subtotal').textContent = formatBRL(subtotal);
+    document.getElementById('total').textContent = formatBRL(subtotal);
+    document.getElementById('cartBadge').textContent = totalQty;
+
+    const freteGratisEl = document.getElementById('freteGratis');
+    if (subtotal >= 100) {
+      freteGratisEl.style.display = 'flex';
+    } else {
+      freteGratisEl.style.display = 'none';
+    }
+
+    // Eventos de +, - e remover
+    document.querySelectorAll('.qty-pill .plus').forEach(btn => {
+      btn.onclick = () => {
+        const i = Number(btn.getAttribute('data-index'));
+        const sack = loadSacola();
+        if (!sack[i]) return;
+        sack[i].quantidade = Number(sack[i].quantidade || 0) + 1;
+        saveSacola(sack);
+        refreshCart();
+      };
+    });
+    document.querySelectorAll('.qty-pill .minus').forEach(btn => {
+      btn.onclick = () => {
+        const i = Number(btn.getAttribute('data-index'));
+        const sack = loadSacola();
+        if (!sack[i]) return;
+        sack[i].quantidade = Number(sack[i].quantidade || 0) - 1;
+        if (sack[i].quantidade <= 0) {
+          sack.splice(i, 1);
+        }
+        saveSacola(sack);
+        refreshCart();
+      };
+    });
+    document.querySelectorAll('.remove-small').forEach(btn => {
+      btn.onclick = () => {
+        const i = Number(btn.getAttribute('data-index'));
+        const sack = loadSacola();
+        if (!sack[i]) return;
+        sack.splice(i, 1);
+        saveSacola(sack);
+        refreshCart();
+      };
+    });
+  }
+
+  // Checkbox "não tenho e-mail"
+  const noEmail = document.getElementById('noEmail');
+  const email = document.getElementById('email');
+  noEmail.addEventListener('change', () => {
+    email.disabled = noEmail.checked;
+    if (noEmail.checked) {
+      email.value = '';
+      email.placeholder = 'Sem e-mail';
+    } else {
+      email.placeholder = 'email@email.com';
+    }
+  });
+
+  // Busca CEP via ViaCEP
+  const cepInput = document.getElementById('cep');
+  cepInput.addEventListener('input', async () => {
+    const cep = cepInput.value.replace(/\D/g, '');
+    if (cep.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+          document.getElementById('rua').value = data.logradouro || '';
+          document.getElementById('bairro').value = data.bairro || '';
+          document.getElementById('cidade').value = data.localidade || '';
+          document.getElementById('estado').value = data.uf || '';
+          document.getElementById('addressFields').style.display = 'block';
+          document.getElementById('paymentForm').style.display = 'block';
+        } else {
+          alert('CEP não encontrado.');
+          document.getElementById('addressFields').style.display = 'none';
+          document.getElementById('paymentForm').style.display = 'none';
+        }
+      } catch {
+        alert('Erro ao buscar CEP.');
+        document.getElementById('addressFields').style.display = 'none';
+        document.getElementById('paymentForm').style.display = 'none';
+      }
+    } else {
+      document.getElementById('addressFields').style.display = 'none';
+      document.getElementById('paymentForm').style.display = 'none';
+    }
+  });
+
+  // Botão gerar Pix → valida e redireciona
+  const btnGerarPix = document.getElementById('btnGerarPix');
+  btnGerarPix.addEventListener('click', () => {
+    // Captura campos
+    const phone = document.getElementById('phone').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const cpf = document.getElementById('cpf').value.trim();
+    const cep = document.getElementById('cep').value.trim();
+    const rua = document.getElementById('rua').value.trim();
+    const bairro = document.getElementById('bairro').value.trim();
+    const cidade = document.getElementById('cidade').value.trim();
+    const estado = document.getElementById('estado').value.trim();
+    const numero = document.getElementById('numero').value.trim();
+    const emailVal = email.value.trim();
+    const noEmailChecked = noEmail.checked;
+
+    // Validação básica
+    if (!noEmailChecked && emailVal === '') {
+      alert('Por favor, preencha o e-mail ou marque "Não tenho e-mail".');
+      return;
+    }
+    if (phone === '' || name === '' || cpf === '' || cep === '' || rua === '' || bairro === '' || cidade === '' || estado === '' || numero === '') {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    // Salva dados no localStorage
+    const userData = { email: emailVal, phone, name, cpf };
+    const addressData = { cep, rua, bairro, cidade, estado, numero };
+    localStorage.setItem('userData', JSON.stringify(userData));
+    localStorage.setItem('addressData', JSON.stringify(addressData));
+
+    // Redireciona para pagamento.html
+    window.location.href = 'pagamento.html';
+  });
+
+  // Inicializa carrinho ao abrir a página
+  refreshCart();
+</script>
