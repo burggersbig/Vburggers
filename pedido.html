@@ -410,62 +410,14 @@
 
 <script>
 const produtos = {
-    "combo-texas": {
-        nome: "Combo Texas Hamburguinho (smash) + batata p + refri p",
-        preco: "R$ 34,90",
-        descricao: "Pão brioche, hambúrguer 70gr, cheddar, bacon, alface, tomate, molho american, batata p e refri p",
-        imagem: "combo-texas.jpg",
-        alt: "Imagem do Combo Texas"
-    },
-    "texas-cheddar": {
-        nome: "Texas Cheddar",
-        preco: "R$ 19,90",
-        descricao: "Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho",
-        imagem: "2.png",
-        alt: "Imagem do Texas Cheddar"
-    },
-    "duplo-bacon": {
-        nome: "Duplo Bacon",
-        preco: "R$ 24,90",
-        descricao: "Pão brioche, dois hambúrgueres 150g, bacon, queijo prato e molho especial",
-        imagem: "3.png",
-        alt: "Imagem do Duplo Bacon"
-    },
-    "veggie-burger": {
-        nome: "Veggie Burger",
-        preco: "R$ 21,90",
-        descricao: "Pão integral, hambúrguer de grão-de-bico, alface, tomate e maionese vegana",
-        imagem: "4.png",
-        alt: "Imagem do Veggie Burger"
-    },
-    "brisket-burger": {
-        nome: "Brisket Burger",
-        preco: "R$ 27,90",
-        descricao: "Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue",
-        imagem: "5.png",
-        alt: "Imagem do Brisket Burger"
-    },
-    "smash-classic": {
-        nome: "Smash Classic",
-        preco: "R$ 18,90",
-        descricao: "Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa",
-        imagem: "smash-classic-placeholder.png",
-        alt: "Imagem do Smash Classic"
-    },
-    "chicken-crispy": {
-        nome: "Chicken Crispy",
-        preco: "R$ 20,90",
-        descricao: "Pão brioche, frango empanado crocante, alface, tomate e maionese",
-        imagem: "chicken-crispy-placeholder.png",
-        alt: "Imagem do Chicken Crispy"
-    },
-    "combo-classic": {
-        nome: "Combo Classic",
-        preco: "R$ 29,90",
-        descricao: "Hambúrguer clássico + batata frita + refrigerante lata",
-        imagem: "combo-classic-placeholder.png",
-        alt: "Imagem do Combo Classic"
-    }
+    "combo-texas": { nome: "Combo Texas Hamburguinho (smash) + batata p + refri p", preco: "R$ 34,90", descricao: "Pão brioche, hambúrguer 70gr, cheddar, bacon, alface, tomate, molho american, batata p e refri p", imagem: "combo-texas.jpg", alt: "Imagem do Combo Texas" },
+    "texas-cheddar": { nome: "Texas Cheddar", preco: "R$ 19,90", descricao: "Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho", imagem: "2.png", alt: "Imagem do Texas Cheddar" },
+    "duplo-bacon": { nome: "Duplo Bacon", preco: "R$ 24,90", descricao: "Pão brioche, dois hambúrgueres 150g, bacon, queijo prato e molho especial", imagem: "3.png", alt: "Imagem do Duplo Bacon" },
+    "veggie-burger": { nome: "Veggie Burger", preco: "R$ 21,90", descricao: "Pão integral, hambúrguer de grão-de-bico, alface, tomate e maionese vegana", imagem: "4.png", alt: "Imagem do Veggie Burger" },
+    "brisket-burger": { nome: "Brisket Burger", preco: "R$ 27,90", descricao: "Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue", imagem: "5.png", alt: "Imagem do Brisket Burger" },
+    "smash-classic": { nome: "Smash Classic", preco: "R$ 18,90", descricao: "Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa", imagem: "smash-classic-placeholder.png", alt: "Imagem do Smash Classic" },
+    "chicken-crispy": { nome: "Chicken Crispy", preco: "R$ 20,90", descricao: "Pão brioche, frango empanado crocante, alface, tomate e maionese", imagem: "chicken-crispy-placeholder.png", alt: "Imagem do Chicken Crispy" },
+    "combo-classic": { nome: "Combo Classic", preco: "R$ 29,90", descricao: "Hambúrguer clássico + batata frita + refrigerante lata", imagem: "combo-classic-placeholder.png", alt: "Imagem do Combo Classic" }
 };
 
 const adicionais = {
@@ -473,116 +425,57 @@ const adicionais = {
     "cheddar": { nome: "Cheddar", preco: 3.90 }
 };
 
+const STORAGE_KEY = 'sacola';
+let cart = [];
+let selecionados = {};
+let basePreco = 0;
+let currentQuantity = 1;
+
 function getQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
+    return new URLSearchParams(window.location.search).get(param);
+}
+
+function parsePreco(precoStr) {
+    if (!precoStr) return 0;
+    return parseFloat(precoStr.replace("R$","").replace(/\./g,"").replace(",",".") || 0);
 }
 
 function formatBRL(value) {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function parsePreco(precoStr) {
-    if (!precoStr) return 0;
-    return parseFloat(precoStr.replace("R$","").replace(/\./g,"").replace(",",".")) || 0;
-}
-
-/* Estado local */
-let basePreco = 0;            
-let selecionados = {};       
-let currentQuantity = 1;     
-let cart = [];               
-
 /* ---------- Local Storage ---------- */
-const STORAGE_KEY = 'sacola';
-
 function loadCartFromStorage() {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        return JSON.parse(raw);
-    } catch(e) {
-        console.error('Erro ao ler sacola do localStorage', e);
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e) { console.error(e); return []; }
 }
-
 function saveCartToStorage(arr) {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    } catch(e) {
-        console.error('Erro ao salvar sacola no localStorage', e);
-    }
-}
-
-/* ---------- Extras selecionados ---------- */
-function atualizarExtrasSelecionados() {
-    const container = document.getElementById('selected-extras');
-    const lista = document.getElementById('selected-extras-list');
-    lista.innerHTML = "";
-
-    const keys = Object.keys(selecionados);
-    if (keys.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
-    container.style.display = 'block';
-
-    keys.forEach(id => {
-        const count = selecionados[id];
-        if (count > 0) {
-            const div = document.createElement('div');
-            div.classList.add('selected-extra-item');
-            div.innerHTML = `
-                <span>${adicionais[id].nome} x${count} (${formatBRL(adicionais[id].preco * count)})</span>
-                <button class="remove-button" aria-label="Remover ${adicionais[id].nome}" data-id="${id}">−</button>
-            `;
-            lista.appendChild(div);
-        }
-    });
-
-    lista.querySelectorAll('button.remove-button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-id');
-            if (selecionados[id]) {
-                selecionados[id]--;
-                if (selecionados[id] <= 0) {
-                    delete selecionados[id];
-                }
-                const el = document.querySelector(`.extra-item[data-extra-id="${id}"] .extra-qty`);
-                if (el) el.textContent = selecionados[id] || 0;
-                atualizarExtrasSelecionados();
-                atualizarItemSubtotal();
-                atualizarCartTotal();
-            }
-        });
-    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+    catch(e) { console.error(e); }
 }
 
 /* ---------- Produto atual ---------- */
 function atualizarProduto() {
     const lancheId = getQueryParam('lanche');
+    const produto = produtos[lancheId];
     const nomeElem = document.getElementById('produto-nome');
     const precoElem = document.getElementById('produto-preco');
     const descElem = document.getElementById('produto-descricao');
     const imgElem = document.getElementById('produto-img');
 
-    if (lancheId && produtos[lancheId]) {
-        const produto = produtos[lancheId];
+    if (produto) {
         nomeElem.textContent = produto.nome;
         precoElem.textContent = produto.preco;
         descElem.textContent = produto.descricao;
         imgElem.src = produto.imagem;
         imgElem.alt = produto.alt;
-
         basePreco = parsePreco(produto.preco);
     } else {
         nomeElem.textContent = "Produto não encontrado";
         precoElem.textContent = "";
-        descElem.textContent = "Por favor, volte e escolha um lanche válido.";
+        descElem.textContent = "Escolha um lanche válido.";
         imgElem.src = "imagem-nao-encontrada.jpg";
         imgElem.alt = "Produto não encontrado";
-
         basePreco = 0;
     }
 
@@ -594,50 +487,71 @@ function atualizarProduto() {
     atualizarItemSubtotal();
 }
 
-function calcularSubtotalItemAtual() {
-    let somaAdicionais = 0;
-    for (const id in selecionados) {
-        somaAdicionais += (adicionais[id].preco * selecionados[id]);
-    }
-    return (basePreco + somaAdicionais) * currentQuantity;
+/* ---------- Extras ---------- */
+function atualizarExtrasSelecionados() {
+    const container = document.getElementById('selected-extras');
+    const lista = document.getElementById('selected-extras-list');
+    lista.innerHTML = "";
+    const keys = Object.keys(selecionados);
+    if (keys.length === 0) { container.style.display='none'; return; }
+    container.style.display='block';
+
+    keys.forEach(id => {
+        const count = selecionados[id];
+        if (count > 0) {
+            const div = document.createElement('div');
+            div.className = 'selected-extra-item';
+            div.innerHTML = `<span>${adicionais[id].nome} x${count} (${formatBRL(adicionais[id].preco*count)})</span>
+                             <button class="remove-button" data-id="${id}">−</button>`;
+            lista.appendChild(div);
+        }
+    });
+
+    lista.querySelectorAll('button.remove-button').forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.dataset.id;
+            if (selecionados[id]) { selecionados[id]--; if (selecionados[id]<=0) delete selecionados[id]; }
+            const el = document.querySelector(`.extra-item[data-extra-id="${id}"] .extra-qty`);
+            if (el) el.textContent = selecionados[id] || 0;
+            atualizarExtrasSelecionados();
+            atualizarItemSubtotal();
+            atualizarCartTotal();
+        };
+    });
 }
 
+/* ---------- Subtotal ---------- */
+function calcularSubtotalItemAtual() {
+    let somaExtras = 0;
+    for(const id in selecionados) somaExtras += (adicionais[id].preco * selecionados[id]);
+    return (basePreco + somaExtras) * currentQuantity;
+}
 function atualizarItemSubtotal() {
-    const el = document.getElementById('item-subtotal');
-    const subtotal = calcularSubtotalItemAtual();
-    el.textContent = formatBRL(subtotal);
+    document.getElementById('item-subtotal').textContent = formatBRL(calcularSubtotalItemAtual());
 }
 
 /* ---------- Carrinho ---------- */
 function extrasSignature(extrasArray) {
-    if (!extrasArray || extrasArray.length === 0) return "";
-    const arr = extrasArray.slice().map(e => `${e.id}:${e.quantidade}`).sort();
-    return arr.join('|');
+    if (!extrasArray || extrasArray.length===0) return "";
+    return extrasArray.map(e=>`${e.id}:${e.quantidade}`).sort().join('|');
 }
 
 function addToCart(item) {
     const currentCart = loadCartFromStorage();
     const signature = extrasSignature(item.extras);
-    const idx = currentCart.findIndex(ci => ci.id === item.id && extrasSignature(ci.extras) === signature);
-    if (idx !== -1) {
-        currentCart[idx].quantidade = (currentCart[idx].quantidade || 0) + (item.quantidade || 0);
-    } else {
-        currentCart.push(item);
-    }
+    const idx = currentCart.findIndex(ci => ci.id===item.id && extrasSignature(ci.extras)===signature);
+    if (idx!==-1) currentCart[idx].quantidade += item.quantidade || 0;
+    else currentCart.push(item);
     saveCartToStorage(currentCart);
     cart = currentCart;
 }
 
 function calcularTotalCarrinho() {
-    let total = 0;
-    for (const it of cart) {
-        let somaExtras = 0;
-        if (Array.isArray(it.extras)) {
-            for (const e of it.extras) {
-                somaExtras += (e.preco * e.quantidade);
-            }
-        }
-        total += (it.preco + somaExtras) * (it.quantidade || 0);
+    let total=0;
+    for(const it of cart){
+        let somaExtras=0;
+        if(it.extras) it.extras.forEach(e=>somaExtras+=(e.preco*e.quantidade));
+        total+=(it.preco+somaExtras)*(it.quantidade||0);
     }
     return total;
 }
@@ -645,14 +559,9 @@ function calcularTotalCarrinho() {
 function atualizarCartTotal() {
     const cartTotal = calcularTotalCarrinho();
     const lancheId = getQueryParam('lanche');
-
-    const itemNoCarrinho = cart.some(item => item.id === lancheId && (!item.extras || item.extras.length === 0));
-
-    let totalGeral = itemNoCarrinho ? cartTotal : cartTotal + calcularSubtotalItemAtual();
-
+    const itemNoCarrinho = cart.some(item => item.id===lancheId && (!item.extras || item.extras.length===0));
+    const totalGeral = itemNoCarrinho ? cartTotal : cartTotal + calcularSubtotalItemAtual();
     document.getElementById('footer-preco').textContent = formatBRL(totalGeral);
-
-    // ✅ salva total no localStorage para pagamento
     localStorage.setItem('pedidoValor', totalGeral);
 }
 
@@ -660,29 +569,19 @@ function renderCart() {
     const container = document.getElementById('cart-container');
     const list = document.getElementById('cart-list');
     list.innerHTML = '';
-
     cart = loadCartFromStorage();
-    if (!cart || cart.length === 0) {
-        container.style.display = 'none';
-        atualizarCartTotal();
-        return;
-    }
-    container.style.display = 'block';
+    if(!cart || cart.length===0){ container.style.display='none'; atualizarCartTotal(); return; }
+    container.style.display='block';
 
-    cart.forEach((it, idx) => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        let extrasText = '';
-        if (it.extras && it.extras.length > 0) {
-            extrasText = it.extras.map(e => `${e.nome} x${e.quantidade}`).join(', ');
-        }
+    cart.forEach((it, idx)=>{
+        let extrasText='';
+        if(it.extras && it.extras.length>0) extrasText=it.extras.map(e=>`${e.nome} x${e.quantidade}`).join(', ');
+        let somaExtras=0;
+        if(it.extras) it.extras.forEach(e=>somaExtras+=(e.preco*e.quantidade));
+        const totalItem=(it.preco+somaExtras)*(it.quantidade||0);
 
-        let somaExtras = 0;
-        if (it.extras && it.extras.length > 0) {
-            it.extras.forEach(e => somaExtras += (e.preco * e.quantidade));
-        }
-        const totalItem = (it.preco + somaExtras) * (it.quantidade || 0);
-
+        const div=document.createElement('div');
+        div.className='cart-item';
         div.innerHTML = `
             <h4>${it.nome}</h4>
             <div class="cart-extras">${extrasText || ''}</div>
@@ -691,7 +590,7 @@ function renderCart() {
                     <button class="qty-button cart-minus" data-idx="${idx}">−</button>
                     <div class="cart-qty" id="cart-qty-${idx}">${it.quantidade}</div>
                     <button class="qty-button cart-plus" data-idx="${idx}">+</button>
-                    <button class="remove-button" style="margin-left:8px;" data-idx="${idx}" aria-label="Remover item">×</button>
+                    <button class="remove-button" style="margin-left:8px;" data-idx="${idx}">×</button>
                 </div>
                 <div class="cart-total" id="cart-total-${idx}">${formatBRL(totalItem)}</div>
             </div>
@@ -699,140 +598,96 @@ function renderCart() {
         list.appendChild(div);
     });
 
-    list.querySelectorAll('.cart-plus').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const idx = parseInt(btn.getAttribute('data-idx'));
-            cart = loadCartFromStorage();
-            cart[idx].quantidade++;
-            saveCartToStorage(cart);
-            renderCart();
-            atualizarCartTotal();
-        });
-    });
-
-    list.querySelectorAll('.cart-minus').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const idx = parseInt(btn.getAttribute('data-idx'));
-            cart = loadCartFromStorage();
-            cart[idx].quantidade--;
-            if (cart[idx].quantidade <= 0) cart.splice(idx, 1);
-            saveCartToStorage(cart);
-            renderCart();
-            atualizarCartTotal();
-        });
-    });
-
-    list.querySelectorAll('.remove-button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const idx = parseInt(btn.getAttribute('data-idx'));
-            cart = loadCartFromStorage();
-            cart.splice(idx, 1);
-            saveCartToStorage(cart);
-            renderCart();
-            atualizarCartTotal();
-        });
-    });
+    list.querySelectorAll('.cart-plus').forEach(btn=>btn.onclick=()=>{const idx=+btn.dataset.idx; cart[idx].quantidade++; saveCartToStorage(cart); renderCart(); atualizarCartTotal();});
+    list.querySelectorAll('.cart-minus').forEach(btn=>btn.onclick=()=>{const idx=+btn.dataset.idx; cart[idx].quantidade--; if(cart[idx].quantidade<=0) cart.splice(idx,1); saveCartToStorage(cart); renderCart(); atualizarCartTotal();});
+    list.querySelectorAll('.remove-button').forEach(btn=>btn.onclick=()=>{const idx=+btn.dataset.idx; cart.splice(idx,1); saveCartToStorage(cart); renderCart(); atualizarCartTotal();});
 
     atualizarCartTotal();
 }
 
 /* ---------- Inicialização ---------- */
-window.onload = () => {
+window.onload = ()=>{
     atualizarProduto();
     cart = loadCartFromStorage();
-
-    // adiciona item atual à sacola somente se usuário clicar "Adicionar mais itens"
     renderCart();
     atualizarCartTotal();
 
-    document.getElementById('btnVoltar').addEventListener('click', () => {
-        if (window.history.length > 1) window.history.back();
-        else window.location.href = 'index.html';
+    document.getElementById('btnVoltar').onclick = ()=> window.history.length>1 ? window.history.back() : location.href='index.html';
+
+    document.getElementById('produto-plus').onclick = ()=>{
+        currentQuantity++; document.getElementById('produto-quantidade').textContent=currentQuantity;
+        atualizarItemSubtotal(); atualizarCartTotal();
+    };
+    document.getElementById('produto-minus').onclick = ()=>{
+        if(currentQuantity>1) currentQuantity--; document.getElementById('produto-quantidade').textContent=currentQuantity;
+        atualizarItemSubtotal(); atualizarCartTotal();
+    };
+
+    document.querySelectorAll('#extras-list .qty-button').forEach(btn=>{
+        btn.onclick = ()=>{
+            const extraItem = btn.closest('.extra-item');
+            const extraId = extraItem.dataset.extraId;
+            const action = btn.dataset.action;
+            if(!selecionados[extraId]) selecionados[extraId]=0;
+            if(action==='plus') selecionados[extraId]++;
+            else if(action==='minus') selecionados[extraId]--;
+            if(selecionados[extraId]<=0) delete selecionados[extraId];
+            extraItem.querySelector('.extra-qty').textContent=selecionados[extraId]||0;
+            atualizarExtrasSelecionados(); atualizarItemSubtotal(); atualizarCartTotal();
+        };
     });
 
-    document.getElementById('produto-plus').addEventListener('click', () => {
-        currentQuantity++;
-        document.getElementById('produto-quantidade').textContent = currentQuantity;
-        atualizarItemSubtotal();
-        atualizarCartTotal();
-    });
-
-    document.getElementById('produto-minus').addEventListener('click', () => {
-        if (currentQuantity > 1) currentQuantity--;
-        document.getElementById('produto-quantidade').textContent = currentQuantity;
-        atualizarItemSubtotal();
-        atualizarCartTotal();
-    });
-
-    document.querySelectorAll('#extras-list .qty-button').forEach(button => {
-        button.addEventListener('click', () => {
-            const extraItem = button.closest('.extra-item');
-            const extraId = extraItem.getAttribute('data-extra-id');
-            const action = button.getAttribute('data-action');
-
-            if (!selecionados[extraId]) selecionados[extraId] = 0;
-
-            if (action === 'plus') selecionados[extraId]++;
-            else if (action === 'minus' && selecionados[extraId] > 0) selecionados[extraId]--;
-
-            if (selecionados[extraId] === 0) delete selecionados[extraId];
-
-            extraItem.querySelector('.extra-qty').textContent = selecionados[extraId] || 0;
-            atualizarExtrasSelecionados();
-            atualizarItemSubtotal();
-            atualizarCartTotal();
-        });
-    });
-
-    document.getElementById('btnAdicionarMais').addEventListener('click', () => {
-        const lancheId = getQueryParam('lanche');
-        if (!lancheId || !produtos[lancheId]) {
-            alert('Produto inválido. Escolha um lanche antes de adicionar à sacola.');
-            return;
-        }
+    document.getElementById('btnAdicionarMais').onclick = ()=>{
+        const lancheId=getQueryParam('lanche');
+        if(!lancheId || !produtos[lancheId]) return alert('Produto inválido.');
 
         const item = {
             id: lancheId,
             nome: produtos[lancheId].nome,
             preco: parsePreco(produtos[lancheId].preco),
             quantidade: currentQuantity,
-            extras: []
+            extras: [],
+            imagem: produtos[lancheId].imagem, // ✅ SALVA IMAGEM
+            alt: produtos[lancheId].alt // opcional
         };
 
-        for (const extraId in selecionados) {
-            if (selecionados[extraId] > 0) {
-                item.extras.push({
-                    id: extraId,
-                    nome: adicionais[extraId].nome,
-                    preco: adicionais[extraId].preco,
-                    quantidade: selecionados[extraId]
-                });
-            }
-        }
+        for(const extraId in selecionados) if(selecionados[extraId]>0) item.extras.push({ id: extraId, nome: adicionais[extraId].nome, preco: adicionais[extraId].preco, quantidade: selecionados[extraId] });
 
         addToCart(item);
-        window.location.href = 'index.html';
-    });
+        window.location.href='index.html';
+    };
 
-    const btnAvancar = document.getElementById('btnAvancar');
-    const modal = document.getElementById('modalEntrega');
-    btnAvancar.addEventListener('click', () => {
-        atualizarCartTotal(); // garante total atualizado
-        modal.style.display = 'flex';
-    });
+    const btnAvancar=document.getElementById('btnAvancar');
+    const modal=document.getElementById('modalEntrega');
 
-    document.querySelectorAll('#modalEntrega button').forEach(btn => {
-        btn.addEventListener('click', () => modal.style.display = 'none');
-    });
+    btnAvancar.onclick=()=> modal.style.display='flex';
+    document.querySelectorAll('#modalEntrega button').forEach(btn=>btn.onclick=()=>modal.style.display='none');
 
-    const btnSim = document.querySelector('#modalEntrega .btn-green');
-    if (btnSim) btnSim.addEventListener('click', () => {
-        modal.style.display = 'none';
-        window.location.href = 'cadastro.html';
-    });
+    const btnSim=document.querySelector('#modalEntrega .btn-green');
+    if(btnSim) btnSim.onclick=()=>{
+        modal.style.display='none';
+        const lancheId=getQueryParam('lanche');
+        if(lancheId && produtos[lancheId]){
+            const item = {
+                id: lancheId,
+                nome: produtos[lancheId].nome,
+                preco: parsePreco(produtos[lancheId].preco),
+                quantidade: currentQuantity,
+                extras: [],
+                imagem: produtos[lancheId].imagem,
+                alt: produtos[lancheId].alt
+            };
+            for(const extraId in selecionados) if(selecionados[extraId]>0) item.extras.push({ id: extraId, nome: adicionais[extraId].nome, preco: adicionais[extraId].preco, quantidade: selecionados[extraId] });
+            addToCart(item);
+        }
+        const currentCart = loadCartFromStorage();
+        localStorage.setItem('pedidoItens', JSON.stringify(currentCart));
+        atualizarCartTotal();
+        window.location.href='cadastro.html';
+    };
 
-    const btnNao = document.querySelector('#modalEntrega .btn-red');
-    if (btnNao) btnNao.addEventListener('click', () => modal.style.display = 'none');
+    const btnNao=document.querySelector('#modalEntrega .btn-red');
+    if(btnNao) btnNao.onclick=()=>modal.style.display='none';
 
     atualizarItemSubtotal();
     atualizarCartTotal();
