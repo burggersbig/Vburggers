@@ -129,23 +129,23 @@
       align-items:flex-end;
     }
     .qty-pill{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:6px 8px;
-    }
+  display:flex;
+  align-items:center;
+  gap:4px;       /* antes 10px, agora menor */
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:2px 4px; /* antes 6px 8px, agora menor */
+}
     .qty-pill button{
-      width:28px;
-      height:28px;
+      width:22px;
+      height:22px;
       display:flex;
       align-items:center;
       justify-content:center;
       border-radius:6px;
       border:0;
-      font-size:18px;
+      font-size:14px;
       font-weight:700;
       cursor:pointer;
       background:transparent;
@@ -435,53 +435,89 @@
   </div>
 
 <script>
-  // chave usada pela sua página pedido.html
+  // Chaves usadas no localStorage
   const STORAGE_KEY = 'sacola';
+  const PEDIDO_ITENS_KEY = 'pedidoItens';
+  const PEDIDO_VALOR_KEY = 'pedidoValor';
 
   // Formatação moeda BRL
   function formatBRL(v) {
     return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
-  // Lê a sacola do localStorage (retorna array)
+  // Parser robusto de preço
+  function toNumberPrice(p) {
+    if (typeof p === 'number' && isFinite(p)) return p;
+    if (typeof p === 'string') {
+      const n = parseFloat(p.replace('R$', '').replace(/\./g, '').replace(',', '.').trim());
+      return isNaN(n) ? 0 : n;
+    }
+    return 0;
+  }
+
+  // Lê a sacola do localStorage
   function loadSacola() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return [];
       return JSON.parse(raw);
     } catch (e) {
-      console.error('Erro ao ler sacola do localStorage', e);
+      console.error('Erro ao ler sacola', e);
       return [];
     }
   }
 
-  // Salva a sacola no localStorage
+  // Salva a sacola
   function saveSacola(arr) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
     } catch (e) {
-      console.error('Erro ao salvar sacola no localStorage', e);
+      console.error('Erro ao salvar sacola', e);
     }
   }
 
-  // Cria elemento HTML para cada item do carrinho
-  function createCartItemElement(item, index) {
-    const somaExtras = (item.extras && item.extras.length > 0)
-      ? item.extras.reduce((acc, ex) => acc + (Number(ex.preco || 0) * Number(ex.quantidade || 0)), 0)
-      : 0;
-    const quantidade = Number(item.quantidade || 1);
-    const itemTotal = (Number(item.preco || 0) + somaExtras) * quantidade;
+  // Usa preferencialmente pedidoItens (e migra para sacola)
+  function getCarrinhoPreferencial() {
+    try {
+      const rawPedidoItens = localStorage.getItem(PEDIDO_ITENS_KEY);
+      if (rawPedidoItens) {
+        const arr = JSON.parse(rawPedidoItens);
+        if (Array.isArray(arr) && arr.length > 0) {
+          saveSacola(arr);
+          localStorage.removeItem(PEDIDO_ITENS_KEY);
+          return arr;
+        } else {
+          localStorage.removeItem(PEDIDO_ITENS_KEY);
+        }
+      }
+    } catch (e) {
+      console.warn('Não foi possível ler pedidoItens:', e);
+    }
+    return loadSacola();
+  }
 
-    const div = document.createElement('div');
-    div.classList.add('product-row');
+  // Cria o elemento visual do item
+  function createCartItemElement(item, index) {
+    const imgSrc = item.imagem || item.img || 'product.jpg';
+
+    const somaExtras = (item.extras && item.extras.length > 0)
+      ? item.extras.reduce((acc, ex) =>
+          acc + (toNumberPrice(ex.preco) * Number(ex.quantidade || 0)), 0)
+      : 0;
+
+    const quantidade = Number(item.quantidade || 1);
+    const precoUnit = toNumberPrice(item.preco);
+    const itemTotal = (precoUnit + somaExtras) * quantidade;
 
     let extrasText = '';
     if (item.extras && item.extras.length > 0) {
       extrasText = item.extras.map(e => `${e.nome} x${e.quantidade}`).join(' · ');
     }
 
+    const div = document.createElement('div');
+    div.classList.add('product-row');
     div.innerHTML = `
-      <img class="thumb" src="${item.img || 'product.jpg'}" alt="${(item.nome || item.name) || 'Produto'}">
+      <img class="thumb" src="${imgSrc}" alt="${(item.nome || item.name) || 'Produto'}">
       <div class="product-info">
         <div class="product-title">
           ${(item.nome || item.name) || 'Produto'}
@@ -505,9 +541,9 @@
     return div;
   }
 
-  // Atualiza exibição do carrinho
+  // Atualiza o carrinho na tela
   function refreshCart() {
-    const sacola = loadSacola();
+    const sacola = getCarrinhoPreferencial();
     const cartItemsEl = document.getElementById('cartItems');
     cartItemsEl.innerHTML = '';
 
@@ -520,11 +556,15 @@
 
     sacola.forEach((item, idx) => {
       cartItemsEl.appendChild(createCartItemElement(item, idx));
+
       const somaExtras = (item.extras && item.extras.length > 0)
-        ? item.extras.reduce((acc, ex) => acc + (Number(ex.preco || 0) * Number(ex.quantidade || 0)), 0)
+        ? item.extras.reduce((acc, ex) =>
+            acc + (toNumberPrice(ex.preco) * Number(ex.quantidade || 0)), 0)
         : 0;
+
       const quantidade = Number(item.quantidade || 1);
-      subtotal += (Number(item.preco || 0) + somaExtras) * quantidade;
+      const precoUnit = toNumberPrice(item.preco);
+      subtotal += (precoUnit + somaExtras) * quantidade;
       totalQty += quantidade;
     });
 
@@ -533,16 +573,12 @@
     document.getElementById('cartBadge').textContent = totalQty;
 
     const freteGratisEl = document.getElementById('freteGratis');
-    if (subtotal >= 100) {
-      freteGratisEl.style.display = 'flex';
-    } else {
-      freteGratisEl.style.display = 'none';
-    }
+    freteGratisEl.style.display = subtotal >= 100 ? 'flex' : 'none';
 
     // Eventos de +, - e remover
     document.querySelectorAll('.qty-pill .plus').forEach(btn => {
       btn.onclick = () => {
-        const i = Number(btn.getAttribute('data-index'));
+        const i = Number(btn.dataset.index);
         const sack = loadSacola();
         if (!sack[i]) return;
         sack[i].quantidade = Number(sack[i].quantidade || 0) + 1;
@@ -552,20 +588,18 @@
     });
     document.querySelectorAll('.qty-pill .minus').forEach(btn => {
       btn.onclick = () => {
-        const i = Number(btn.getAttribute('data-index'));
+        const i = Number(btn.dataset.index);
         const sack = loadSacola();
         if (!sack[i]) return;
         sack[i].quantidade = Number(sack[i].quantidade || 0) - 1;
-        if (sack[i].quantidade <= 0) {
-          sack.splice(i, 1);
-        }
+        if (sack[i].quantidade <= 0) sack.splice(i, 1);
         saveSacola(sack);
         refreshCart();
       };
     });
     document.querySelectorAll('.remove-small').forEach(btn => {
       btn.onclick = () => {
-        const i = Number(btn.getAttribute('data-index'));
+        const i = Number(btn.dataset.index);
         const sack = loadSacola();
         if (!sack[i]) return;
         sack.splice(i, 1);
@@ -588,7 +622,7 @@
     }
   });
 
-  // Busca CEP via ViaCEP
+  // Busca CEP
   const cepInput = document.getElementById('cep');
   cepInput.addEventListener('input', async () => {
     const cep = cepInput.value.replace(/\D/g, '');
@@ -619,10 +653,9 @@
     }
   });
 
-  // Botão gerar Pix → valida e redireciona
+  // Botão gerar Pix
   const btnGerarPix = document.getElementById('btnGerarPix');
   btnGerarPix.addEventListener('click', () => {
-    // Captura campos
     const phone = document.getElementById('phone').value.trim();
     const name = document.getElementById('name').value.trim();
     const cpf = document.getElementById('cpf').value.trim();
@@ -635,7 +668,6 @@
     const emailVal = email.value.trim();
     const noEmailChecked = noEmail.checked;
 
-    // Validação básica
     if (!noEmailChecked && emailVal === '') {
       alert('Por favor, preencha o e-mail ou marque "Não tenho e-mail".');
       return;
@@ -645,16 +677,14 @@
       return;
     }
 
-    // Salva dados no localStorage
     const userData = { email: emailVal, phone, name, cpf };
     const addressData = { cep, rua, bairro, cidade, estado, numero };
     localStorage.setItem('userData', JSON.stringify(userData));
     localStorage.setItem('addressData', JSON.stringify(addressData));
 
-    // Redireciona para pagamento.html
     window.location.href = 'pagamento.html';
   });
 
-  // Inicializa carrinho ao abrir a página
+  // Inicializa
   refreshCart();
 </script>
