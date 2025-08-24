@@ -253,7 +253,7 @@
   <!-- AppBar -->
   <div class="appbar">
     <span class="back" aria-label="Voltar" onclick="window.location.href='cadastro.html'">
-      <svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="icon chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6"/>
       </svg>
     </span>
@@ -262,21 +262,23 @@
 
   <main class="page">
 
-    <section class="deliver-to" aria-label="Dados do destinatário">
+    <!-- Dados do destinatário -->
+    <section class="deliver-to">
       <div class="label">Este pedido será entregue a:</div>
       <button class="btn-outline">Trocar</button>
       <div class="name"></div>
       <div class="phone"></div>
     </section>
 
-    <section class="section" aria-label="Endereço de entrega">
+    <!-- Endereço -->
+    <section class="section">
       <div class="section-head">Endereço de entrega</div>
       <div class="address-card">
         <div class="address-text"></div>
         <button class="btn-outline">Trocar</button>
       </div>
       <div class="eta">
-        <svg class="icon clock" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg class="icon clock" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9"></circle>
           <path d="M12 7v5l3 2"></path>
         </svg>
@@ -284,11 +286,12 @@
       </div>
     </section>
 
-    <section class="section" aria-label="Forma de pagamento">
+    <!-- Forma de pagamento -->
+    <section class="section">
       <div class="section-head">Forma de pagamento</div>
 
       <div class="pay-row">
-        <svg class="icon pix" viewBox="0 0 64 64" aria-hidden="true">
+        <svg class="icon pix" viewBox="0 0 64 64">
           <defs>
             <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#1cc0b0"/>
@@ -308,7 +311,7 @@
       </div>
 
       <div class="pay-safe">
-        <svg class="icon lock" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg class="icon lock" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="10" rx="2"></rect>
           <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
         </svg>
@@ -322,7 +325,7 @@
       </div>
 
       <!-- Formulário Cartão -->
-      <div id="cardForm" style="display:none; margin-top:20px; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08); transition: all 0.3s ease;">
+      <div id="cardForm" style="display:none; margin-top:20px; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
         <div class="field-group">
           <input class="field-input" type="text" id="cardNumber" placeholder=" ">
           <label class="field-label" for="cardNumber">Número do cartão</label>
@@ -344,13 +347,6 @@
         <button id="confirmCard">Salvar cartão</button>
       </div>
 
-    </section>
-
-    <section class="coupon" aria-label="Cupom">
-      <span>Cupom</span>
-      <svg class="icon caret" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M6 15l6-6 6 6"/>
-      </svg>
     </section>
 
   </main>
@@ -380,75 +376,77 @@ const user = JSON.parse(localStorage.getItem(STORAGE_USER) || '{}');
 const address = JSON.parse(localStorage.getItem(STORAGE_ADDRESS) || '{}');
 
 // Preencher dados do usuário
-const deliverSection = document.querySelector('.deliver-to');
-if(deliverSection){
-  deliverSection.querySelector('.name').textContent = user.name || '';
-  deliverSection.querySelector('.phone').textContent = user.phone || '';
-}
+document.querySelector('.deliver-to .name').textContent = user.name || '';
+document.querySelector('.deliver-to .phone').textContent = user.phone || '';
 
 // Preencher endereço
-const addressCard = document.querySelector('.address-card .address-text');
-if(addressCard){
-  const addrText = `${address.rua || ''}, ${address.numero || ''},<br>`+
-                   `${address.bairro || ''}, ${address.cidade || ''} - ${address.estado || ''}<br>`+
-                   `${address.cep || ''}`;
-  addressCard.innerHTML = addrText;
-}
+document.querySelector('.address-card .address-text').innerHTML =
+  `${address.rua || ''}, ${address.numero || ''}<br>`+
+  `${address.bairro || ''}, ${address.cidade || ''} - ${address.estado || ''}<br>`+
+  `${address.cep || ''}`;
 
 // Calcular subtotal
-let subtotal = 0;
-cart.forEach(item=>{
-  const somaExtras = (item.extras && item.extras.length>0)
-    ? item.extras.reduce((acc, ex)=>acc + (Number(ex.preco||0)*Number(ex.quantidade||0)),0)
-    : 0;
-  subtotal += (Number(item.preco||0)+somaExtras)*Number(item.quantidade||1);
-});
+let subtotal = cart.reduce((acc, item) => {
+  const extras = (item.extras || []).reduce((sum, ex) => sum + Number(ex.preco || 0)*Number(ex.quantidade || 0), 0);
+  return acc + (Number(item.preco || 0) + extras)*Number(item.quantidade || 1);
+}, 0);
 
-// Botões trocar
-document.querySelectorAll('.deliver-to .btn-outline, .address-card .btn-outline').forEach(btn=>{
-  btn.addEventListener('click', ()=>window.location.href='cadastro.html');
+// Botões "Trocar" com comportamento específico
+const btnsTrocar = document.querySelectorAll('.btn-outline');
+
+// Primeiro botão: trocar destinatário
+btnsTrocar[0].addEventListener('click', () => window.location.href = 'cadastro.html');
+
+// Segundo botão: trocar endereço
+btnsTrocar[1].addEventListener('click', () => window.location.href = 'cadastro.html');
+
+// Terceiro botão: trocar forma de pagamento
+const modal = document.getElementById('paymentModal');
+const modalContent = modal.querySelector('.modal-content');
+btnsTrocar[2].addEventListener('click', () => {
+  modal.style.display = 'flex';
+  setTimeout(() => {
+    modalContent.style.transform = 'scale(1)';
+    modalContent.style.opacity = '1';
+  }, 10);
 });
 
 // Modal forma de pagamento
-const payChangeBtn = document.querySelector('.pay-row .btn-outline');
-const modal = document.getElementById('paymentModal');
-const modalContent = modal.querySelector('.modal-content');
+const closeModal = document.getElementById('closeModal');
 const pixForm = document.getElementById('pixForm');
 const cardForm = document.getElementById('cardForm');
-const closeModal = document.getElementById('closeModal');
 const payTitle = document.querySelector('.pay-row .pay-title');
 const paySub = document.querySelector('.pay-row .pay-sub');
 
-if(payChangeBtn) payChangeBtn.addEventListener('click', ()=>{
-  modal.style.display='flex';
-  setTimeout(()=>{modalContent.style.transform='scale(1)'; modalContent.style.opacity='1';},10);
+closeModal.addEventListener('click', () => {
+  modalContent.style.transform = 'scale(0.8)';
+  modalContent.style.opacity = '0';
+  setTimeout(() => modal.style.display = 'none', 300);
 });
-closeModal.addEventListener('click', ()=>{
-  modalContent.style.transform='scale(0.8)'; modalContent.style.opacity='0';
-  setTimeout(()=>modal.style.display='none',300);
-});
-document.getElementById('choosePix').addEventListener('click', ()=>{
-  pixForm.style.display='block';
-  cardForm.style.display='none';
-  payTitle.textContent='Pix';
-  paySub.textContent='Pagamento com Pix online';
+
+document.getElementById('choosePix').addEventListener('click', () => {
+  pixForm.style.display = 'block';
+  cardForm.style.display = 'none';
+  payTitle.textContent = 'Pix';
+  paySub.textContent = 'Pagamento com Pix online';
   closeModal.click();
 });
-document.getElementById('chooseCard').addEventListener('click', ()=>{
-  pixForm.style.display='none';
-  cardForm.style.display='block';
-  payTitle.textContent='Cartão';
-  paySub.textContent='Pagamento com Cartão online';
+
+document.getElementById('chooseCard').addEventListener('click', () => {
+  pixForm.style.display = 'none';
+  cardForm.style.display = 'block';
+  payTitle.textContent = 'Cartão';
+  paySub.textContent = 'Pagamento com Cartão online';
   closeModal.click();
 });
 
 // Salvar cartão
-document.getElementById('confirmCard').addEventListener('click', ()=>{
-  const cardNumber=document.getElementById('cardNumber').value;
-  const cardName=document.getElementById('cardName').value;
-  const cardExpiry=document.getElementById('cardExpiry').value;
-  const cardCVC=document.getElementById('cardCVC').value;
-  if(!cardNumber || !cardName || !cardExpiry || !cardCVC){
+document.getElementById('confirmCard').addEventListener('click', () => {
+  const cardNumber = document.getElementById('cardNumber').value;
+  const cardName = document.getElementById('cardName').value;
+  const cardExpiry = document.getElementById('cardExpiry').value;
+  const cardCVC = document.getElementById('cardCVC').value;
+  if (!cardNumber || !cardName || !cardExpiry || !cardCVC) {
     alert('Preencha todos os campos do cartão!');
     return;
   }
@@ -456,39 +454,37 @@ document.getElementById('confirmCard').addEventListener('click', ()=>{
 });
 
 // Botão finalizar pagamento
-document.querySelector('.bottom .btn-primary').addEventListener('click', async ()=>{
-  if(cart.length===0){
+document.querySelector('.bottom .btn-primary').addEventListener('click', async () => {
+  if (cart.length === 0) {
     alert('Seu carrinho está vazio!');
     return;
   }
 
-  // Salvar subtotal no localStorage
   localStorage.setItem('pedidoValor', subtotal);
 
-  if(payTitle.textContent==='Pix'){
-    // Chamar backend para gerar chave PIX
-    try{
+  if (payTitle.textContent === 'Pix') {
+    try {
       const response = await fetch('/gerar-pix', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
         body: JSON.stringify({valor: subtotal})
       });
       const data = await response.json();
-      if(data.qrCode && data.chave){
+      if (data.qrCode && data.chave) {
         const pixDiv = document.getElementById('pixQRCode');
         pixDiv.innerHTML = `<img src="${data.qrCode}" alt="QR Code Pix"><p>${data.chave}</p>`;
         alert('Chave Pix gerada! Confira abaixo o QR Code.');
       } else {
         alert('Erro ao gerar Pix. Tente novamente.');
       }
-    }catch(err){
+    } catch(err) {
       console.error(err);
       alert('Erro de conexão ao gerar Pix.');
     }
-  }else{
+  } else {
     alert(`Pedido de ${subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} pronto para pagamento com cartão!`);
   }
 });
 </script>
+
 </body>
-</html>
