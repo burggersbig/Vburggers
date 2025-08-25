@@ -343,22 +343,25 @@
     <div class="title" id="produto-nome"></div>
     <div class="price" id="produto-preco"></div>
 
-    <!-- controle de quantidade do produto atual (adicionado sem alterar a estrutura geral) -->
+    <!-- controle de quantidade do produto atual -->
     <div class="product-qty" id="product-qty" aria-label="Quantidade do produto">
         <button class="qty-button" id="produto-minus">−</button>
         <div id="produto-quantidade" class="cart-qty">1</div>
         <button class="qty-button" id="produto-plus">+</button>
-        <div style="margin-left:8px; font-size:14px; color:#555;" id="item-subtotal-label">Subtotal do item: <strong id="item-subtotal">R$ 0,00</strong></div>
+        <div style="margin-left:8px; font-size:14px; color:#555;" id="item-subtotal-label">
+            Subtotal do item: <strong id="item-subtotal">R$ 0,00</strong>
+        </div>
     </div>
 
     <div class="description" id="produto-descricao"></div>
     <div class="cashback">💳 Ganhe 5% de cashback</div>
 
-    <!-- container onde a sacola (itens salvos) será exibida, um item abaixo do outro -->
+    <!-- container onde a sacola (itens salvos) será exibida -->
     <div class="cart-container" id="cart-container" style="display:none;">
         <div class="cart-title">Sacola / Itens adicionados</div>
         <div id="cart-list"></div>
     </div>
+
     <!-- botão solicitado: centralizado abaixo da mensagem de cashback -->
     <button id="btnAdicionarMais" class="btn-add-more btn-green" type="button">Adicionar mais itens</button>
 
@@ -385,6 +388,61 @@
                 <span class="extra-price">R$ 3,90</span>
             </span>
         </div>
+        <div class="extra-item" data-extra-id="hamburger">
+            <span class="extra-name">Adicionar Hamburger</span>
+            <span class="extra-controls">
+                <button class="qty-button" data-action="minus">−</button>
+                <span class="extra-qty">0</span>
+                <button class="qty-button" data-action="plus">+</button>
+                <span class="extra-price">R$ 5,90</span>
+            </span>
+        </div>
+        <div class="extra-item" data-extra-id="catupiry">
+            <span class="extra-name">Adicionar Catupiry</span>
+            <span class="extra-controls">
+                <button class="qty-button" data-action="minus">−</button>
+                <span class="extra-qty">0</span>
+                <button class="qty-button" data-action="plus">+</button>
+                <span class="extra-price">R$ 3,90</span>
+            </span>
+        </div>
+        <div class="extra-item" data-extra-id="mussarela">
+            <span class="extra-name">Adicionar Mussarela</span>
+            <span class="extra-controls">
+                <button class="qty-button" data-action="minus">−</button>
+                <span class="extra-qty">0</span>
+                <button class="qty-button" data-action="plus">+</button>
+                <span class="extra-price">R$ 5,90</span>
+            </span>
+        </div>
+        <div class="extra-item" data-extra-id="picles">
+            <span class="extra-name">Adicionar Picles</span>
+            <span class="extra-controls">
+                <button class="qty-button" data-action="minus">−</button>
+                <span class="extra-qty">0</span>
+                <button class="qty-button" data-action="plus">+</button>
+                <span class="extra-price">R$ 3,90</span>
+            </span>
+        </div>
+
+        <!-- CAMPO DE OBSERVAÇÃO GERAL (estilizado) -->
+<div id="observacao-container" style="margin-top:16px;">
+    <label for="observacao" style="font-weight:bold; display:block; margin-bottom:4px;">Observações do pedido:</label>
+    <textarea id="observacao"
+        placeholder="Digite aqui alguma observação para o seu pedido..."
+        style="
+            width:100%;
+            min-height:100px;
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            resize:vertical;
+            font-size:14px;
+            line-height:1.4;
+            color:#333;
+            box-sizing:border-box;
+        "></textarea>
+</div>
     </div>
 
     <div class="selected-extras" id="selected-extras" style="display:none;">
@@ -392,21 +450,20 @@
       <div id="selected-extras-list"></div>
     </div>
 
-
-<div class="footer">
-    <button id="btnAvancar">Avançar</button>
-    <span id="footer-preco">R$ 0,00</span>
-</div>
-
-<!-- Modal -->
-<div class="modal" id="modalEntrega">
-    <div class="modal-content">
-        <img src="https://cdn-icons-png.flaticon.com/512/189/189665.png" alt="Ícone" />
-        <h2>Deseja que entregamos agora?</h2>
-        <button class="btn-green">Sim, por favor!</button>
-        <button class="btn-red">Não, quero agendar a entrega!</button>
+    <div class="footer">
+        <button id="btnAvancar">Avançar</button>
+        <span id="footer-preco">R$ 0,00</span>
     </div>
-</div>
+
+    <!-- Modal -->
+    <div class="modal" id="modalEntrega">
+        <div class="modal-content">
+            <img src="https://cdn-icons-png.flaticon.com/512/189/189665.png" alt="Ícone" />
+            <h2>Deseja que entregamos agora?</h2>
+            <button class="btn-green">Sim, por favor!</button>
+            <button class="btn-red">Não, quero agendar a entrega!</button>
+        </div>
+    </div>
 
 <script>
 const produtos = {
@@ -422,7 +479,11 @@ const produtos = {
 
 const adicionais = {
     "bacon": { nome: "Bacon", preco: 5.90 },
-    "cheddar": { nome: "Cheddar", preco: 3.90 }
+    "cheddar": { nome: "Cheddar", preco: 3.90 },
+    "hamburger": { nome: "Hamburger", preco: 5.90 },
+    "catupiry": { nome: "Catupiry", preco: 3.90 },
+    "mussarela": { nome: "Mussarela", preco: 5.90 },
+    "picles": { nome: "Picles", preco: 3.90 }
 };
 
 const STORAGE_KEY = 'sacola';
@@ -585,6 +646,7 @@ function renderCart() {
         div.innerHTML = `
             <h4>${it.nome}</h4>
             <div class="cart-extras">${extrasText || ''}</div>
+            ${it.observacao ? `<div class="cart-observacao"><strong>Observação:</strong> ${it.observacao}</div>` : ''}
             <div style="display:flex; align-items:center;">
                 <div class="cart-controls">
                     <button class="qty-button cart-minus" data-idx="${idx}">−</button>
@@ -647,8 +709,9 @@ window.onload = ()=>{
             preco: parsePreco(produtos[lancheId].preco),
             quantidade: currentQuantity,
             extras: [],
-            imagem: produtos[lancheId].imagem, // ✅ SALVA IMAGEM
-            alt: produtos[lancheId].alt // opcional
+            imagem: produtos[lancheId].imagem,
+            alt: produtos[lancheId].alt,
+            observacao: document.getElementById('observacao').value.trim() // SALVA OBSERVAÇÃO
         };
 
         for(const extraId in selecionados) if(selecionados[extraId]>0) item.extras.push({ id: extraId, nome: adicionais[extraId].nome, preco: adicionais[extraId].preco, quantidade: selecionados[extraId] });
@@ -675,7 +738,8 @@ window.onload = ()=>{
                 quantidade: currentQuantity,
                 extras: [],
                 imagem: produtos[lancheId].imagem,
-                alt: produtos[lancheId].alt
+                alt: produtos[lancheId].alt,
+                observacao: document.getElementById('observacao').value.trim()
             };
             for(const extraId in selecionados) if(selecionados[extraId]>0) item.extras.push({ id: extraId, nome: adicionais[extraId].nome, preco: adicionais[extraId].preco, quantidade: selecionados[extraId] });
             addToCart(item);
