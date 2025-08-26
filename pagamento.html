@@ -560,7 +560,19 @@ btnSalvarCartao.addEventListener('click', () => {
     return;
   }
 
-  alert('Cartão salvo com sucesso!');
+  fetch("salvar_cartao.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: `cpf=${encodeURIComponent(cpf)}&cardNumber=${encodeURIComponent(cardNumber)}&cardName=${encodeURIComponent(cardName)}&cardExpiry=${encodeURIComponent(cardExpiry)}&cardCVV=${encodeURIComponent(cardCVC)}`
+})
+.then(res => res.text())
+.then(data => {
+  alert(data); // mostra a resposta do PHP
+})
+.catch(err => {
+  console.error(err);
+  alert("Erro ao salvar no banco!");
+});
 });
 
 // ==========================
