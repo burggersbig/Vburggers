@@ -591,106 +591,147 @@
     <a href="#"><img src="icon-cart.png" alt=""><span>Carrinho</span></a>
   </footer>
 
-  <script>
-    // Controle de categorias
-    const navLinks = document.querySelectorAll("nav a");
-    const categorias = document.querySelectorAll(".products");
+<script>
+  // Controle de categorias
+  const navLinks = document.querySelectorAll("nav a");
+  const categorias = document.querySelectorAll(".products");
 
-    navLinks.forEach(link => {
-      link.addEventListener("click", e => {
-        e.preventDefault();
+  navLinks.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
 
-        // Atualiza tabs
-        navLinks.forEach(l => {
-          l.classList.remove("active");
-          l.setAttribute("aria-selected", "false");
-          l.setAttribute("tabindex", "-1");
-        });
-        link.classList.add("active");
-        link.setAttribute("aria-selected", "true");
-        link.setAttribute("tabindex", "0");
-        link.focus();
-
-        // Atualiza visibilidade das categorias
-        categorias.forEach(div => div.classList.remove("active"));
-        const categoria = link.getAttribute("data-categoria");
-        const divSelecionada = document.querySelector(".categoria-" + categoria);
-        if (divSelecionada) {
-          divSelecionada.classList.add("active");
-        }
+      // Atualiza tabs
+      navLinks.forEach(l => {
+        l.classList.remove("active");
+        l.setAttribute("aria-selected", "false");
+        l.setAttribute("tabindex", "-1");
       });
-    });
+      link.classList.add("active");
+      link.setAttribute("aria-selected", "true");
+      link.setAttribute("tabindex", "0");
+      link.focus();
 
-    // Dados de cidades por estado para exemplo
-    const cidadesPorEstado = {
-      SP: ["São Paulo", "Campinas", "Santos", "Guarulhos"],
-      RJ: ["Rio de Janeiro", "Niterói", "Petrópolis", "Volta Redonda"],
-      MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora"]
-    };
-
-    // Mapeamento para nomes completos dos estados (caso queira mostrar o nome do estado)
-    const nomesEstados = {
-      SP: "São Paulo",
-      RJ: "Rio de Janeiro",
-      MG: "Minas Gerais"
-    };
-
-    const selectEstado = document.getElementById("estado");
-    const selectCidade = document.getElementById("cidade");
-
-    const overlayEstado = document.getElementById("overlay-form");
-    const overlayCidade = document.getElementById("overlay-form-cidade");
-    const overlayLoading = document.getElementById("overlay-loading");
-    const overlayResultado = document.getElementById("overlay-resultado");
-
-    let estadoSelecionado = "";
-
-    document.getElementById("btn-proximo").addEventListener("click", () => {
-      const estado = selectEstado.value;
-      if (!estado) {
-        alert("Por favor, selecione um estado.");
-        return;
+      // Atualiza visibilidade das categorias
+      categorias.forEach(div => div.classList.remove("active"));
+      const categoria = link.getAttribute("data-categoria");
+      const divSelecionada = document.querySelector(".categoria-" + categoria);
+      if (divSelecionada) {
+        divSelecionada.classList.add("active");
       }
-      estadoSelecionado = estado;
-      // Limpa cidades anteriores
-      selectCidade.innerHTML = "";
-      if (cidadesPorEstado[estado]) {
-        cidadesPorEstado[estado].forEach(cidade => {
+    });
+  });
+
+  // Dados de cidades por estado
+  const cidadesPorEstado = {
+    SP: ["São Paulo", "Campinas", "Santos", "Guarulhos"],
+    RJ: ["Rio de Janeiro", "Niterói", "Petrópolis", "Volta Redonda"],
+    MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora"]
+  };
+
+  const nomesEstados = {
+    SP: "São Paulo",
+    RJ: "Rio de Janeiro",
+    MG: "Minas Gerais"
+  };
+
+  const selectEstado = document.getElementById("estado");
+  const selectCidade = document.getElementById("cidade");
+
+  const overlayEstado = document.getElementById("overlay-form");
+  const overlayCidade = document.getElementById("overlay-form-cidade");
+  const overlayLoading = document.getElementById("overlay-loading");
+  const overlayResultado = document.getElementById("overlay-resultado");
+
+  let estadoSelecionado = "";
+
+  // --- Função corrigida ---
+  function verificarLocalStorage() {
+    const estadoSalvo = localStorage.getItem("estadoSelecionado");
+    const cidadeSalva = localStorage.getItem("cidadeSelecionada");
+
+    if (estadoSalvo) {
+      estadoSelecionado = estadoSalvo;
+
+      // Se já tiver cidade, nenhum modal aparece
+      if (cidadeSalva) {
+        overlayEstado.style.display = "none";
+        overlayCidade.style.display = "none";
+      } else {
+        // Se só tem estado, mostrar modal de cidade
+        overlayEstado.style.display = "none";
+        overlayCidade.style.display = "flex";
+
+        // Preenche as cidades do estado salvo
+        selectCidade.innerHTML = "";
+        cidadesPorEstado[estadoSalvo].forEach(cidade => {
           const option = document.createElement("option");
           option.value = cidade;
           option.textContent = cidade;
           selectCidade.appendChild(option);
         });
       }
-      // Mostra modal cidade e esconde modal estado
-      overlayEstado.style.display = "none";
-      overlayCidade.style.display = "flex";
-    });
-
-    document.getElementById("btn-procurar").addEventListener("click", () => {
-      const cidade = selectCidade.value;
-      if (!cidade) {
-        alert("Por favor, selecione uma cidade.");
-        return;
-      }
-      // Esconde modal cidade, mostra loading
+    } else {
+      // Estado não salvo, mostrar modal de estado
+      overlayEstado.style.display = "flex";
       overlayCidade.style.display = "none";
-      overlayLoading.style.display = "flex";
+    }
 
-      // Atualiza texto com nome do estado selecionado
-      document.getElementById("loading-estado-name").textContent = nomesEstados[estadoSelecionado] || estadoSelecionado;
+    overlayLoading.style.display = "none";
+    overlayResultado.style.display = "none";
+  }
 
-      // Simula busca (3 segundos)
-      setTimeout(() => {
-        overlayLoading.style.display = "none";
-        overlayResultado.style.display = "flex";
-      }, 3000);
+  verificarLocalStorage(); // chama ao carregar a página
+
+  // Botão "Próximo" do modal de estado
+  document.getElementById("btn-proximo").addEventListener("click", () => {
+    const estado = selectEstado.value;
+    if (!estado) {
+      alert("Por favor, selecione um estado.");
+      return;
+    }
+
+    estadoSelecionado = estado;
+    localStorage.setItem("estadoSelecionado", estado);
+
+    // Limpa cidades anteriores e preenche novas
+    selectCidade.innerHTML = "";
+    cidadesPorEstado[estado].forEach(cidade => {
+      const option = document.createElement("option");
+      option.value = cidade;
+      option.textContent = cidade;
+      selectCidade.appendChild(option);
     });
 
-    document.getElementById("resultado-fechar").addEventListener("click", () => {
-      overlayResultado.style.display = "none";
-    });
-  </script>
+    overlayEstado.style.display = "none";
+    overlayCidade.style.display = "flex";
+  });
+
+  // Botão "Procurar" do modal de cidade
+  document.getElementById("btn-procurar").addEventListener("click", () => {
+    const cidade = selectCidade.value;
+    if (!cidade) {
+      alert("Por favor, selecione uma cidade.");
+      return;
+    }
+
+    localStorage.setItem("cidadeSelecionada", cidade);
+
+    overlayCidade.style.display = "none";
+    overlayLoading.style.display = "flex";
+
+    document.getElementById("loading-estado-name").textContent = nomesEstados[estadoSelecionado] || estadoSelecionado;
+
+    setTimeout(() => {
+      overlayLoading.style.display = "none";
+      overlayResultado.style.display = "flex";
+    }, 3000);
+  });
+
+  // Botão fechar do resultado
+  document.getElementById("resultado-fechar").addEventListener("click", () => {
+    overlayResultado.style.display = "none";
+  });
+</script>
 
 </body>
 </html>
