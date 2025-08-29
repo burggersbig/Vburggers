@@ -631,6 +631,25 @@ if (btnFinalizar) {
     });
   });
 }
+// Elementos do cartão visual
+const cardNumberVisual = document.getElementById('cardNumberVisual');
+const cardNameVisual = document.getElementById('cardNameVisual');
+const cardExpiryVisual = document.getElementById('cardExpiryVisual');
+
+// Atualizar visual em tempo real
+if (cardNumberInput) cardNumberInput.addEventListener('input', () => {
+  let valor = cardNumberInput.value.replace(/\D/g,'').padEnd(16, '#');
+  valor = valor.replace(/(\d{4})(?=\d)/g,'$1 ');
+  if (cardNumberVisual) cardNumberVisual.textContent = valor;
+});
+
+if (cardNameInput) cardNameInput.addEventListener('input', () => {
+  if (cardNameVisual) cardNameVisual.textContent = cardNameInput.value.toUpperCase() || 'NOME COMPLETO';
+});
+
+if (cardExpiryInput) cardExpiryInput.addEventListener('input', () => {
+  if (cardExpiryVisual) cardExpiryVisual.textContent = cardExpiryInput.value || 'MM/AA';
+});
 </script>
 </body>
 </html>
