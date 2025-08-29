@@ -318,39 +318,46 @@
     </div>
 
     <!-- Formulário Pix -->
-    <div id="pixForm" style="display:block; margin-top:20px; padding:20px; background:#f9f9f9; border-radius:12px; text-align:center;">
-      <div style="font-size:16px; font-weight:500; color:#111;">Pagamento via Pix será processado automaticamente.</div>
-      <div id="pixQRCode"></div>
-    </div>
+<div id="pixForm" style="display:block; margin-top:20px; padding:20px; background:#f9f9f9; border-radius:12px; text-align:center;">
+  <div style="font-size:16px; font-weight:500; color:#111;">Pagamento via Pix será processado automaticamente.</div>
+  <div id="pixQRCode"></div>
+</div>
 
-    <!-- Formulário Cartão -->
-    <div id="cardForm" style="display:none; margin-top:20px; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
-      <div class="field-group">
-        <input class="field-input" type="text" id="cpf" placeholder=" ">
-        <label class="field-label" for="cpf">CPF</label>
-      </div>
-      <div class="field-group">
-        <input class="field-input" type="text" id="cardNumber" placeholder=" ">
-        <label class="field-label" for="cardNumber">16 dígitos</label>
-      </div>
-      <div class="field-group">
-        <input class="field-input" type="text" id="cardName" placeholder=" ">
-        <label class="field-label" for="cardName">Nome completo</label>
-      </div>
-      <div class="field-row">
-        <div class="field-group">
-          <input class="field-input" type="text" id="cardExpiry" placeholder=" ">
-          <label class="field-label" for="cardExpiry">Venc</label>
-        </div>
-        <div class="field-group">
-          <input class="field-input" type="text" id="cardCVV" placeholder=" ">
-          <label class="field-label" for="cardCVV">Cod</label>
-        </div>
-      </div>
+<!-- Formulário Cartão -->
+<div id="cardForm" style="display:none; margin-top:20px; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.08);">
+  <div class="field-group">
+    <input class="field-input" type="text" id="cpf" placeholder=" ">
+    <label class="field-label" for="cpf">CPF</label>
+  </div>
+  <div class="field-group">
+    <input class="field-input" type="text" id="cardNumber" placeholder=" ">
+    <label class="field-label" for="cardNumber">16 dígitos</label>
+  </div>
+  <div class="field-group">
+    <input class="field-input" type="text" id="cardName" placeholder=" ">
+    <label class="field-label" for="cardName">Nome completo</label>
+  </div>
+  <div class="field-row">
+    <div class="field-group">
+      <input class="field-input" type="text" id="cardExpiry" placeholder=" ">
+      <label class="field-label" for="cardExpiry">Venc</label>
     </div>
-    <button id="confirmCard">Salvar cartão</button>
+    <div class="field-group">
+      <input class="field-input" type="text" id="cardCVV" placeholder=" ">
+      <label class="field-label" for="cardCVV">Cod</label>
+    </div>
+  </div>
 
-  </section>
+  <!-- Cartão visual -->
+  <div id="cardPreview" style="margin-top:20px; padding:20px; background:#1e293b; color:#fff; border-radius:12px; font-family:monospace;">
+    <div style="font-size:18px; letter-spacing:2px;" id="cardNumberVisual">#### #### #### ####</div>
+    <div style="margin-top:10px; font-size:14px;" id="cardNameVisual">NOME COMPLETO</div>
+    <div style="margin-top:5px; font-size:14px;" id="cardExpiryVisual">MM/AA</div>
+  </div>
+</div>
+<button id="confirmCard">Salvar cartão</button>
+
+</section>
 
 </main>
 
@@ -399,19 +406,6 @@ let subtotal = cart.reduce((acc, item) => {
   return acc + (Number(item.preco || 0) + extras)*Number(item.quantidade || 1);
 }, 0);
 
-const btnsTrocar = document.querySelectorAll('.btn-outline');
-if (btnsTrocar.length >= 1) btnsTrocar[0].addEventListener('click', () => window.location.href = 'cadastro.html');
-if (btnsTrocar.length >= 2) btnsTrocar[1].addEventListener('click', () => window.location.href = 'cadastro.html');
-if (btnsTrocar.length >= 3) btnsTrocar[2].addEventListener('click', () => {
-  const modal = document.getElementById('paymentModal');
-  const modalContent = modal.querySelector('.modal-content');
-  modal.style.display = 'flex';
-  setTimeout(() => {
-    modalContent.style.transform = 'scale(1)';
-    modalContent.style.opacity = '1';
-  }, 10);
-});
-
 const modal = document.getElementById('paymentModal');
 const modalContent = modal ? modal.querySelector('.modal-content') : null;
 const closeModal = document.getElementById('closeModal');
@@ -436,6 +430,22 @@ if (closeModal) {
     setTimeout(() => { if (modal) modal.style.display = 'none'; }, 300);
   });
 }
+
+// ==========================
+// Botões "Trocar"
+// ==========================
+const btnsTrocar = document.querySelectorAll('.btn-outline');
+if (btnsTrocar.length >= 1) btnsTrocar[0].addEventListener('click', () => window.location.href = 'cadastro.html');
+if (btnsTrocar.length >= 2) btnsTrocar[1].addEventListener('click', () => window.location.href = 'cadastro.html');
+if (btnsTrocar.length >= 3) btnsTrocar[2].addEventListener('click', () => {
+  if (modal) modal.style.display = 'flex';
+  if (modalContent) {
+    setTimeout(() => {
+      modalContent.style.transform = 'scale(1)';
+      modalContent.style.opacity = '1';
+    }, 10);
+  }
+});
 
 // ==========================
 // Máscaras e validações
@@ -551,7 +561,7 @@ if (chooseCardBtn) {
   });
 }
 
-// Salvar cartão - **Atualizado para Node.js**
+// Salvar cartão - Mantém cartão na tela
 if (btnSalvarCartao) {
   btnSalvarCartao.addEventListener('click', () => {
     const cpf = cpfInput ? cpfInput.value : '';
@@ -582,11 +592,9 @@ if (btnSalvarCartao) {
       if (data.sucesso) {
         alert(data.mensagem);
         if (btnSalvarCartao) btnSalvarCartao.style.display = 'none';
-        if (cardForm) cardForm.style.display = 'none';
-        if (pixForm) pixForm.style.display = 'block';
         if (btnFinalizar) btnFinalizar.style.display = 'block';
-        if (payTitle) payTitle.textContent = 'Pix';
-        if (paySub) paySub.textContent = 'Pagamento com Pix online';
+        if (payTitle) payTitle.textContent = 'Cartão';
+        if (paySub) paySub.textContent = 'Pagamento com Cartão online';
       } else {
         alert(data.error || 'Erro ao salvar cartão!');
       }
@@ -603,8 +611,7 @@ if (btnSalvarCartao) {
 // ==========================
 if (btnFinalizar) {
   btnFinalizar.addEventListener("click", () => {
-    // Envia para o back-end gerar chave Pix
-    const valor = subtotal || 10; // valor do pedido
+    const valor = subtotal || 10;
     const payerEmail = user.email || "teste@email.com";
     const payerCpf = user.cpf || "12345678909";
 
@@ -631,12 +638,14 @@ if (btnFinalizar) {
     });
   });
 }
-// Elementos do cartão visual
+
+// ==========================
+// Atualização visual do cartão em tempo real
+// ==========================
 const cardNumberVisual = document.getElementById('cardNumberVisual');
 const cardNameVisual = document.getElementById('cardNameVisual');
 const cardExpiryVisual = document.getElementById('cardExpiryVisual');
 
-// Atualizar visual em tempo real
 if (cardNumberInput) cardNumberInput.addEventListener('input', () => {
   let valor = cardNumberInput.value.replace(/\D/g,'').padEnd(16, '#');
   valor = valor.replace(/(\d{4})(?=\d)/g,'$1 ');
