@@ -597,5 +597,40 @@ if (btnSalvarCartao) {
     });
   });
 }
+
+// ==========================
+// Geração do QR Code Pix ao clicar em Ir para o pagamento
+// ==========================
+if (btnFinalizar) {
+  btnFinalizar.addEventListener("click", () => {
+    // Envia para o back-end gerar chave Pix
+    const valor = subtotal || 10; // valor do pedido
+    const payerEmail = user.email || "teste@email.com";
+    const payerCpf = user.cpf || "12345678909";
+
+    fetch("https://rifas-3c8k.onrender.com/gerar-chave-pix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ valor, payerEmail, payerCpf })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.qrcodeBase64) {
+        document.getElementById("pixQRCode").innerHTML = `
+          <img src="data:image/png;base64,${data.qrcodeBase64}" style="max-width:200px;"/><br>
+          <p><strong>Copia e Cola:</strong></p>
+          <textarea readonly style="width:100%;height:60px">${data.copiaECola}</textarea>
+        `;
+      } else {
+        alert("Erro ao gerar QR Code Pix!");
+      }
+    })
+    .catch(err => {
+      console.error("Erro Pix:", err);
+      alert("Não foi possível gerar o QR Code Pix.");
+    });
+  });
+}
 </script>
 </body>
+</html>
