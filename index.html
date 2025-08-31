@@ -265,6 +265,40 @@
     @media (max-width: 420px) {
       .product-card { width: 100%; }
     }
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 1000;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 12px;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-item.active {
+  color: #9b51e0; /* cor primária */
+  font-weight: 600;
+}
   </style>
 </head>
 <body>
@@ -584,12 +618,39 @@
   </div>
 </div>
 
-  <footer>
-    <a href="#"><img src="icon-home.png" alt=""><span>Início</span></a>
-    <a href="#"><img src="icon-orders.png" alt=""><span>Pedidos</span></a>
-    <a href="#"><img src="icon-promos.png" alt=""><span>Promos</span></a>
-    <a href="#"><img src="icon-cart.png" alt=""><span>Carrinho</span></a>
-  </footer>
+  <!-- Menu inferior -->
+<nav class="bottom-nav" role="navigation" aria-label="Menu inferior">
+  <a class="nav-item" data-link="index.html" aria-label="Início">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
+    </svg>
+    <span>Início</span>
+  </a>
+  <a class="nav-item" data-link="pedido.html" aria-label="Pedido">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="4" width="18" height="16" rx="2"/>
+      <path d="M7 8h10M7 12h10M7 16h6"/>
+    </svg>
+    <span>Pedido</span>
+  </a>
+  <a class="nav-item" data-link="promo.html" aria-label="Promos">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 12v7a2 2 0 0 1-2 2h-3l-3 3-3-3H6a2 2 0 0 1-2-2v-7"/>
+      <path d="M7 9l5-6 5 6"/>
+    </svg>
+    <span>Promos</span>
+  </a>
+  <a class="nav-item" data-link="carrinho.html" aria-label="Carrinho">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="9" cy="20" r="1.8"/>
+      <circle cx="17" cy="20" r="1.8"/>
+      <path d="M2 3h2l2.4 12.5A2 2 0 0 0 8.3 17H18a2 2 0 0 0 2-1.6l1.6-8.4H6.2"/>
+    </svg>
+    <span>Carrinho</span>
+  </a>
+</nav>
+</div>
+</div>
 
 <script>
   // Controle de categorias
@@ -600,7 +661,7 @@
     link.addEventListener("click", e => {
       e.preventDefault();
 
-      // Atualiza tabs
+      // Controle de ativo visual e acessibilidade
       navLinks.forEach(l => {
         l.classList.remove("active");
         l.setAttribute("aria-selected", "false");
@@ -611,14 +672,35 @@
       link.setAttribute("tabindex", "0");
       link.focus();
 
-      // Atualiza visibilidade das categorias
+      // Controle de categorias
       categorias.forEach(div => div.classList.remove("active"));
       const categoria = link.getAttribute("data-categoria");
       const divSelecionada = document.querySelector(".categoria-" + categoria);
       if (divSelecionada) {
         divSelecionada.classList.add("active");
       }
+
+      // Redirecionamento correto
+      const destino = link.getAttribute("data-link");
+      if (destino) {
+        window.location.href = destino;
+      }
     });
+  });
+
+  // Marcar automaticamente a aba correta ao carregar a página
+  const navItems = document.querySelectorAll(".bottom-nav .nav-item");
+  const currentPage = window.location.pathname.split("/").pop(); // ex: 'index.html'
+  navItems.forEach(item => {
+    if (item.getAttribute("data-link") === currentPage) {
+      item.classList.add("active");
+      item.setAttribute("aria-selected", "true");
+      item.setAttribute("tabindex", "0");
+    } else {
+      item.classList.remove("active");
+      item.setAttribute("aria-selected", "false");
+      item.setAttribute("tabindex", "-1");
+    }
   });
 
   // Dados de cidades por estado
@@ -643,25 +725,28 @@
   const overlayResultado = document.getElementById("overlay-resultado");
 
   let estadoSelecionado = "";
+  const MODAL_EXPIRACAO_MINUTOS = 5;
 
-  // --- Função corrigida ---
   function verificarLocalStorage() {
     const estadoSalvo = localStorage.getItem("estadoSelecionado");
     const cidadeSalva = localStorage.getItem("cidadeSelecionada");
+    const timestampSalvo = localStorage.getItem("modalTimestamp");
+    const agora = new Date().getTime();
+    let expirado = true;
 
-    if (estadoSalvo) {
+    if (timestampSalvo) {
+      const diffMinutos = (agora - parseInt(timestampSalvo)) / (1000 * 60);
+      if (diffMinutos < MODAL_EXPIRACAO_MINUTOS) expirado = false;
+    }
+
+    if (!estadoSalvo || expirado) {
+      overlayEstado.style.display = "flex";
+      overlayCidade.style.display = "none";
+    } else {
       estadoSelecionado = estadoSalvo;
-
-      // Se já tiver cidade, nenhum modal aparece
-      if (cidadeSalva) {
-        overlayEstado.style.display = "none";
-        overlayCidade.style.display = "none";
-      } else {
-        // Se só tem estado, mostrar modal de cidade
+      if (!cidadeSalva) {
         overlayEstado.style.display = "none";
         overlayCidade.style.display = "flex";
-
-        // Preenche as cidades do estado salvo
         selectCidade.innerHTML = "";
         cidadesPorEstado[estadoSalvo].forEach(cidade => {
           const option = document.createElement("option");
@@ -669,31 +754,22 @@
           option.textContent = cidade;
           selectCidade.appendChild(option);
         });
+      } else {
+        overlayEstado.style.display = "none";
+        overlayCidade.style.display = "none";
       }
-    } else {
-      // Estado não salvo, mostrar modal de estado
-      overlayEstado.style.display = "flex";
-      overlayCidade.style.display = "none";
     }
-
     overlayLoading.style.display = "none";
     overlayResultado.style.display = "none";
   }
 
-  verificarLocalStorage(); // chama ao carregar a página
+  verificarLocalStorage();
 
-  // Botão "Próximo" do modal de estado
   document.getElementById("btn-proximo").addEventListener("click", () => {
     const estado = selectEstado.value;
-    if (!estado) {
-      alert("Por favor, selecione um estado.");
-      return;
-    }
-
+    if (!estado) { alert("Por favor, selecione um estado."); return; }
     estadoSelecionado = estado;
     localStorage.setItem("estadoSelecionado", estado);
-
-    // Limpa cidades anteriores e preenche novas
     selectCidade.innerHTML = "";
     cidadesPorEstado[estado].forEach(cidade => {
       const option = document.createElement("option");
@@ -701,33 +777,24 @@
       option.textContent = cidade;
       selectCidade.appendChild(option);
     });
-
     overlayEstado.style.display = "none";
     overlayCidade.style.display = "flex";
   });
 
-  // Botão "Procurar" do modal de cidade
   document.getElementById("btn-procurar").addEventListener("click", () => {
     const cidade = selectCidade.value;
-    if (!cidade) {
-      alert("Por favor, selecione uma cidade.");
-      return;
-    }
-
+    if (!cidade) { alert("Por favor, selecione uma cidade."); return; }
     localStorage.setItem("cidadeSelecionada", cidade);
-
+    localStorage.setItem("modalTimestamp", new Date().getTime());
     overlayCidade.style.display = "none";
     overlayLoading.style.display = "flex";
-
     document.getElementById("loading-estado-name").textContent = nomesEstados[estadoSelecionado] || estadoSelecionado;
-
     setTimeout(() => {
       overlayLoading.style.display = "none";
       overlayResultado.style.display = "flex";
     }, 3000);
   });
 
-  // Botão fechar do resultado
   document.getElementById("resultado-fechar").addEventListener("click", () => {
     overlayResultado.style.display = "none";
   });
