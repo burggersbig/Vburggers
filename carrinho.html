@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carrinho</title>
+<style>
+:root{
+  --bg:#f6f6f6;
+  --surface:#fff;
+  --text:#222;
+  --muted:#6f6f6f;
+  --accent:#0bb07b;
+  --border:#e8e8e8;
+  --radius:12px;
+  --shadow:0 2px 8px rgba(0,0,0,.06);
+  --nav-h:64px;
+}
+body{
+  margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+  background:var(--bg); color:var(--text);
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+}
+.wrap{padding:16px;}
+.card{background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:16px; padding:16px;}
+.cart-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+.cart-header h2{margin:0;}
+.badge{background:var(--accent); color:#fff; border-radius:12px; padding:2px 8px; font-size:14px;}
+.product-row{display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:12px;}
+.product-row:last-child{border-bottom:none;}
+.thumb{width:80px; height:80px; object-fit:cover; border-radius:8px;}
+.product-info{flex:1;}
+.product-title{font-weight:700; margin-bottom:4px;}
+.product-desc{color:var(--muted); font-size:14px; margin-bottom:4px;}
+.extras-line{font-size:13px; color:#555;}
+.qty-control{display:flex; align-items:center; gap:8px;}
+.qty-pill{display:flex; align-items:center; border:1px solid #ccc; border-radius:16px; overflow:hidden; height:28px;}
+.qty-pill button{background:none;border:none;padding:0 8px;font-size:14px;cursor:pointer;line-height:28px;}
+.qty-count{padding:0 6px; min-width:20px; text-align:center; font-size:14px;}
+.item-total{font-weight:700; margin-left:8px; font-size:14px;}
+.remove-small{background:none;border:none;color:red;font-size:18px;cursor:pointer;margin-left:8px;}
+.totals{margin-top:12px;}
+.totals .row{display:flex; justify-content:space-between; margin-bottom:6px;}
+.totals .total{font-size:16px;font-weight:700;}
+.bottom-nav{position:fixed; bottom:0; left:0; width:100%; height:65px; display:grid; grid-template-columns:repeat(4,1fr); background:#fff; border-top:1px solid #e0e0e0; padding-bottom:env(safe-area-inset-bottom); z-index:1000;}
+.nav-item{display:flex; flex-direction:column; align-items:center; justify-content:center; color:#666; font-size:12px; gap:5px; cursor:pointer;}
+.nav-item svg{width:24px;height:24px;}
+.nav-item.active{color:#9b51e0;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="cart-header">
+      <h2>Seu carrinho</h2>
+      <div class="badge" id="cartBadge">0</div>
+    </div>
+    <div id="cartItems"></div>
+    <hr>
+    <div class="totals">
+      <div class="row"><span>Subtotal</span><strong class="value" id="subtotal">R$ 0,00</strong></div>
+      <div class="row total"><span>Total</span><strong class="value" id="total">R$ 0,00</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- Menu inferior -->
+<nav class="bottom-nav" role="navigation" aria-label="Menu inferior">
+  <a class="nav-item" href="index.html" aria-label="Início">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    <span>Início</span>
+  </a>
+  <a class="nav-item" href="pedido.html" aria-label="Pedido">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+    <span>Pedido</span>
+  </a>
+  <a class="nav-item" href="promo.html" aria-label="Promos">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v7a2 2 0 0 1-2 2h-3l-3 3-3-3H6a2 2 0 0 1-2-2v-7"/><path d="M7 9l5-6 5 6"/></svg>
+    <span>Promos</span>
+  </a>
+  <a class="nav-item active" href="carrinho.html" aria-label="Carrinho">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.8"/><circle cx="17" cy="20" r="1.8"/><path d="M2 3h2l2.4 12.5A2 2 0 0 0 8.3 17H18a2 2 0 0 0 2-1.6l1.6-8.4H6.2"/></svg>
+    <span>Carrinho</span>
+  </a>
+</nav>
+
+<script>
+const STORAGE_KEY = 'sacola';
+
+function formatBRL(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function toNumberPrice(p){
+  if(typeof p==='number' && isFinite(p)) return p;
+  if(typeof p==='string'){
+    const n=parseFloat(p.replace('R$','').replace(/\./g,'').replace(',','.').trim());
+    return isNaN(n)?0:n;
+  }
+  return 0;
+}
+
+function loadSacola(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    return raw?JSON.parse(raw):[];
+  }catch(e){ console.error('Erro ao ler sacola',e); return []; }
+}
+
+function saveSacola(arr){
+  try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(arr)); }
+  catch(e){ console.error('Erro ao salvar sacola',e); }
+}
+
+function createCartItemElement(item,index){
+  const imgSrc=item.imagem||item.img||'https://via.placeholder.com/80';
+  const somaExtras = item.extras && item.extras.length>0
+    ? item.extras.reduce((acc,ex)=>acc + (toNumberPrice(ex.preco)*Number(ex.quantidade||0)),0)
+    :0;
+  const quantidade=Number(item.quantidade||1);
+  const precoUnit=toNumberPrice(item.preco);
+  const itemTotal=(precoUnit+somaExtras)*quantidade;
+  const extrasText=item.extras && item.extras.length>0
+    ? item.extras.map(e=>`${e.nome} x${e.quantidade}`).join(' · ')
+    :'';
+  const div=document.createElement('div');
+  div.classList.add('product-row');
+  div.innerHTML=`
+    <img class="thumb" src="${imgSrc}" alt="${item.nome||item.name||'Produto'}">
+    <div class="product-info">
+      <div class="product-title">${item.nome||item.name||'Produto'} ${item.promo?'<span class="promo">PROMOÇÃO</span>':''}</div>
+      <div class="product-desc">${item.descricao||item.desc||''}</div>
+      ${extrasText?`<div class="extras-line">Adicionais: ${extrasText}</div>`:''}
+    </div>
+    <div class="qty-control">
+      <div style="display:flex; align-items:center;">
+        <div class="qty-pill">
+          <button class="minus" data-index="${index}">−</button>
+          <div class="qty-count" id="qty-${index}">${quantidade}</div>
+          <button class="plus" data-index="${index}">+</button>
+        </div>
+        <div class="item-total" id="item-total-${index}">${formatBRL(itemTotal)}</div>
+        <button class="remove-small" data-index="${index}" title="Remover item">×</button>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+function refreshCart(){
+  const sacola=loadSacola();
+  const cartItemsEl=document.getElementById('cartItems');
+  cartItemsEl.innerHTML='';
+  if(!sacola || sacola.length===0){
+    cartItemsEl.innerHTML='<div style="padding:12px; color:#666">Sua sacola está vazia.</div>';
+  }
+  let subtotal=0, totalQty=0;
+  sacola.forEach((item,idx)=>{
+    cartItemsEl.appendChild(createCartItemElement(item,idx));
+    const somaExtras = item.extras && item.extras.length>0
+      ? item.extras.reduce((acc,ex)=>acc + (toNumberPrice(ex.preco)*Number(ex.quantidade||0)),0)
+      :0;
+    const quantidade=Number(item.quantidade||1);
+    const precoUnit=toNumberPrice(item.preco);
+    subtotal+=(precoUnit+somaExtras)*quantidade;
+    totalQty+=quantidade;
+  });
+  document.getElementById('subtotal').textContent=formatBRL(subtotal);
+  document.getElementById('total').textContent=formatBRL(subtotal);
+  document.getElementById('cartBadge').textContent=totalQty;
+
+  document.querySelectorAll('.qty-pill .plus').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.index);
+    const sack=loadSacola(); if(!sack[i]) return;
+    sack[i].quantidade=Number(sack[i].quantidade||0)+1;
+    saveSacola(sack); refreshCart();
+  });
+  document.querySelectorAll('.qty-pill .minus').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.index);
+    const sack=loadSacola(); if(!sack[i]) return;
+    sack[i].quantidade=Number(sack[i].quantidade||0)-1;
+    if(sack[i].quantidade<=0) sack.splice(i,1);
+    saveSacola(sack); refreshCart();
+  });
+  document.querySelectorAll('.remove-small').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.index);
+    const sack=loadSacola(); if(!sack[i]) return;
+    sack.splice(i,1); saveSacola(sack); refreshCart();
+  });
+}
+
+refreshCart();
+</script>
+</body>
+</html>
