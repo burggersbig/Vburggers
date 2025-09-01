@@ -467,14 +467,206 @@
 
 <script>
 const produtos = {
-    "combo-texas": { nome: "Combo Texas Hamburguinho (smash) + batata p + refri p", preco: "R$ 34,90", descricao: "Pão brioche, hambúrguer 70gr, cheddar, bacon, alface, tomate, molho american, batata p e refri p", imagem: "combo-texas.jpg", alt: "Imagem do Combo Texas" },
-    "texas-cheddar": { nome: "Texas Cheddar", preco: "R$ 19,90", descricao: "Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho", imagem: "2.png", alt: "Imagem do Texas Cheddar" },
-    "duplo-bacon": { nome: "Duplo Bacon", preco: "R$ 24,90", descricao: "Pão brioche, dois hambúrgueres 150g, bacon, queijo prato e molho especial", imagem: "3.png", alt: "Imagem do Duplo Bacon" },
-    "veggie-burger": { nome: "Veggie Burger", preco: "R$ 21,90", descricao: "Pão integral, hambúrguer de grão-de-bico, alface, tomate e maionese vegana", imagem: "4.png", alt: "Imagem do Veggie Burger" },
-    "brisket-burger": { nome: "Brisket Burger", preco: "R$ 27,90", descricao: "Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue", imagem: "5.png", alt: "Imagem do Brisket Burger" },
-    "smash-classic": { nome: "Smash Classic", preco: "R$ 18,90", descricao: "Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa", imagem: "smash-classic-placeholder.png", alt: "Imagem do Smash Classic" },
-    "chicken-crispy": { nome: "Chicken Crispy", preco: "R$ 20,90", descricao: "Pão brioche, frango empanado crocante, alface, tomate e maionese", imagem: "chicken-crispy-placeholder.png", alt: "Imagem do Chicken Crispy" },
-    "combo-classic": { nome: "Combo Classic", preco: "R$ 29,90", descricao: "Hambúrguer clássico + batata frita + refrigerante lata", imagem: "combo-classic-placeholder.png", alt: "Imagem do Combo Classic" }
+  "texas-cheddar": {
+    nome: "Vini Cheddar",
+    preco: "R$ 19,90",
+    descricao: "Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho",
+    imagem: "texas-cheddar-placeholder.png",
+    alt: "Imagem do Texas Cheddar"
+  },
+  "duplo-bacon": {
+    nome: "Vini Duplo Bacon",
+    preco: "R$ 24,90",
+    descricao: "Pão brioche, dois hambúrgueres 150g, bacon, queijo prato e molho especial",
+    imagem: "2.png",
+    alt: "Imagem do Duplo Bacon"
+  },
+  "veggie-burger": {
+    nome: "Vini Veggie Burger",
+    preco: "R$ 21,90",
+    descricao: "Pão integral, hambúrguer de grão-de-bico, alface, tomate e maionese vegana",
+    imagem: "3.png",
+    alt: "Imagem do Veggie Burger"
+  },
+  "vini-pepperoni": {
+    nome: "Vini Pepperoni",
+    preco: "R$ 19,90",
+    descricao: "Pão brioche, hambúrguer 150g, queijo tipo 4 queijos, mussarela, pepperoni e molho texas",
+    imagem: "8.png",
+    alt: "Imagem do Vini Pepperoni"
+  },
+  "vini-grill": {
+    nome: "Vini Grill",
+    preco: "R$ 19,90",
+    descricao: "Pão tipo brioche, hambúrguer 150g, queijo, tomate, alface e molho grill",
+    imagem: "9.png",
+    alt: "Imagem do Vini Grill"
+  },
+  "vini-urso": {
+    nome: "Vini Urso",
+    preco: "R$ 19,90",
+    descricao: "Pão australiano, hambúrguer 150g, cebola crispy, bacon, cheddar, mussarela e molho especial",
+    imagem: "10.png",
+    alt: "Imagem do Vini Urso"
+  },
+  "vini-black": {
+    nome: "Vini Black",
+    preco: "R$ 19,90",
+    descricao: "Pão australiano, hambúrguer 150g, queijo tipo 4 queijos, rúcula, tomate, cebola roxa e molho especial",
+    imagem: "11.png",
+    alt: "Imagem do Vini Black"
+  },
+  "vini-gourmet": {
+    nome: "Vini Gourmet",
+    preco: "R$ 19,90",
+    descricao: "Pão de gergelim, hambúrguer 150g, vinagrete, mussarela e molho especial da casa",
+    imagem: "12.png",
+    alt: "Imagem do Vini Gourmet"
+  },
+
+  "brisket-burger": {
+    nome: "Vini Brisket Burger",
+    preco: "R$ 16,90",
+    descricao: "Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue",
+    imagem: "4.png",
+    alt: "Imagem do Brisket Burger"
+  },
+  "combo-vini-cheddar": {
+    nome: "Combo Vini Cheddar + Batata P + Refri P",
+    preco: "R$ 21,90",
+    descricao: "Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho + batata p + refri p",
+    imagem: "13.png",
+    alt: "Combo Vini Cheddar"
+  },
+  "combo-3-texas-smoker": {
+    nome: "Combo 3 Texas Smoker + Batata + Refri 1L",
+    preco: "R$ 32,90",
+    descricao: "3 Vini Texas Smoker + 1 porção de batata + refrigerante 1L",
+    imagem: "14.png",
+    alt: "Combo 3 Texas Smoker"
+  },
+  "combo-2-vini-dogao": {
+    nome: "Combo: 2 Vini Dogão + Batata P + Refri 600ml",
+    preco: "R$ 29,90",
+    descricao: "Pães, 2 salsichas e acompanhamentos + batata p + refri 600ml",
+    imagem: "15.png",
+    alt: "Combo 2 Vini Dogão"
+  },
+
+  "combo-vini-bacon": {
+    nome: "Combo Vini Bacon - Lanche + Batata P + Refrigerante P",
+    preco: "R$ 22,90",
+    descricao: "Vini Texas bacon + batata p + refrigerante 200ml",
+    imagem: "16.png",
+    alt: "Combo Vini Bacon"
+  },
+  "combo-vini-urso": {
+    nome: "Combo Vini Urso - Lanche + Batata P + Refrigerante P",
+    preco: "R$ 18,90",
+    descricao: "Vini Urso + batata p + refrigerante 200ml",
+    imagem: "17.png",
+    alt: "Combo Vini Urso"
+  },
+  "smash-classic": {
+    nome: "Smash Classic",
+    preco: "R$ 18,90",
+    descricao: "Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa",
+    imagem: "18.png",
+    alt: "Smash Classic"
+  },
+  "combo-vini-gourmet": {
+    nome: "Combo Vini Gourmet - Lanche + Batata P + Refrigerante P",
+    preco: "R$ 18,90",
+    descricao: "Vini gourmet + batata p + refrigerante 200ml",
+    imagem: "19.png",
+    alt: "Combo Vini Gourmet"
+  },
+  "combo-vini-burguer": {
+    nome: "Combo Vini Burguer - Lanche + Batata P + Refrigerante P",
+    preco: "R$ 18,90",
+    descricao: "Vini burguer + batata p + refrigerante 200ml",
+    imagem: "20.png",
+    alt: "Combo Vini Burguer"
+  },
+  "combo-vini-grill": {
+    nome: "Combo Vini Grill - Lanche + Batata P + Refrigerante P",
+    preco: "R$ 18,90",
+    descricao: "Pão brioche, hambúrguer 150g, queijo, tomate, alface e molho grill",
+    imagem: "21.png",
+    alt: "Combo Vini Grill"
+  },
+
+  "vini-dogao": {
+    nome: "Vini Dogão",
+    preco: "R$ 12,90",
+    descricao: "Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão cremoso, cheddar",
+    imagem: "22.png",
+    alt: "Vini Dogão"
+  },
+  "vini-doguinho": {
+    nome: "Vini Doguinho",
+    preco: "R$ 9,90",
+    descricao: "Pão 65g, 1 salsicha, purê, maionese verde, batata palha, ketchup e mostarda",
+    imagem: "23.png",
+    alt: "Vini Doguinho"
+  },
+  "vini-dog-caramelo": {
+    nome: "Vini Dog caramelo",
+    preco: "R$ 14,90",
+    descricao: "Pão de hot dog, 1 salsicha, purê, molho grill, vinagrete e batata palha",
+    imagem: "24.png",
+    alt: "Vini Dog Caramelo"
+  },
+  "combo-vini-doguinho": {
+    nome: "Combo Vini Doguinho + Batata P + Refri P",
+    preco: "R$ 18,90",
+    descricao: "Combo Vini Doguinho + batata p + refri p",
+    imagem: "25.png",
+    alt: "Combo Vini Doguinho"
+  },
+  "combo-vini-dogao": {
+    nome: "Combo Vini Dogão + Batata P + Refri P",
+    preco: "R$ 20,90",
+    descricao: "Combo Vini Dogão + batata p + refri p",
+    imagem: "26.png",
+    alt: "Combo Vini Dogão"
+  },
+  "combo-vini-dog-caramelo": {
+    nome: "Combo Vini dog caramelo + Batata P + Refri P",
+    preco: "R$ 20,90",
+    descricao: "Combo Vini dog caramelo + batata p + refri p",
+    imagem: "27.png",
+    alt: "Combo Vini Dog Caramelo"
+  },
+
+  "refrigerante-lata": {
+    nome: "Refrigerante Lata",
+    preco: "R$ 5,00",
+    descricao: "Informe o refrigerante desejado nas observações",
+    imagem: "28.png",
+    alt: "Refrigerante Lata"
+  },
+  "suco-del-valle": {
+    nome: "Suco Del Valle",
+    preco: "R$ 7,00",
+    descricao: "Informe o sabor do suco nas observações",
+    imagem: "29.png",
+    alt: "Suco Del Valle"
+  },
+  "refrigerante-1l": {
+    nome: "Refrigerante 1 litro",
+    preco: "R$ 9,00",
+    descricao: "Somente Guaraná Antarctica",
+    imagem: "30.png",
+    alt: "Refrigerante 1 litro"
+  },
+  "cerveja-long-neck": {
+    nome: "Cerveja Long Neck",
+    preco: "R$ 9,90",
+    descricao: "Informe a cerveja desejada nas observações",
+    imagem: "31.png",
+    alt: "Cerveja Long Neck"
+  }
 };
 
 const adicionais = {
