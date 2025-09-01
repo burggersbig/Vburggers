@@ -370,16 +370,17 @@
     5% cashback - compre e ganhe na hora
   </div>
 
-  <nav role="navigation" aria-label="Categorias de produtos">
-    <a href="#" class="active" data-categoria="promocao" role="tab" aria-selected="true" tabindex="0">Lanches</a>
-    <a href="#" data-categoria="texas" role="tab" aria-selected="false" tabindex="-1">Promoções</a>
-    <a href="#" data-categoria="smash" role="tab" aria-selected="false" tabindex="-1">Combos</a>
-    <a href="#" data-categoria="lanches" role="tab" aria-selected="false" tabindex="-1">Hot Dog</a>
-    <a href="#" data-categoria="combos" role="tab" aria-selected="false" tabindex="-1">Bebidas</a>
-  </nav>
+  <!-- MENU DE CATEGORIAS -->
+<nav role="navigation" aria-label="Categorias de produtos">
+  <a href="#" class="active" data-categoria="lanches" role="tab" aria-selected="true" tabindex="0">Lanches</a>
+  <a href="#" data-categoria="promocao" role="tab" aria-selected="false" tabindex="-1">Promoções</a>
+  <a href="#" data-categoria="smash" role="tab" aria-selected="false" tabindex="-1">Combos</a>
+  <a href="#" data-categoria="texas" role="tab" aria-selected="false" tabindex="-1">Hot Dog</a>
+  <a href="#" data-categoria="bebidas" role="tab" aria-selected="false" tabindex="-1">Bebidas</a>
+</nav>
 
-<!-- PRODUTOS - Promoção -->
-<div class="products categoria-promocao active" role="tabpanel">
+<!-- PRODUTOS - Lanches -->
+<div class="products categoria-lanches active" role="tabpanel">
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
     <img src="texas-cheddar-placeholder.png" alt="Texas Cheddar" />
     <div class="product-info">
@@ -406,51 +407,55 @@
       <div class="price">R$ 21,90</div>
     </div>
   </div>
-<div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
-    <img src="8.png" alt="Texas Cheddar" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-pepperoni'">
+    <img src="8.png" alt="Vini Pepperoni" />
     <div class="product-info">
       <h3>Vini Pepperoni</h3>
       <p>Pão brioche, hambúrguer 150g, queijo tipo 4 queijos, mussarela, pepperoni e molho texas</p>
       <div class="price">R$ 19,90</div>
     </div>
   </div>
-<div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
-    <img src="9.png" alt="Texas Cheddar" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-grill'">
+    <img src="9.png" alt="Vini Grill" />
     <div class="product-info">
       <h3>Vini Grill</h3>
       <p>Pão tipo brioche, hambúrguer 150g, queijo, tomate, alface e molho grill</p>
       <div class="price">R$ 19,90</div>
     </div>
   </div>
-<div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
-    <img src="10.png" alt="Texas Cheddar" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-urso'">
+    <img src="10.png" alt="Vini Urso" />
     <div class="product-info">
       <h3>Vini Urso</h3>
       <p>Pão australiano, hambúrguer 150g, cebola crispy, bacon, cheddar, mussarela e molho especial</p>
       <div class="price">R$ 19,90</div>
     </div>
   </div>
-<div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
-    <img src="11.png" alt="Texas Cheddar" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-black'">
+    <img src="11.png" alt="Vini Black" />
     <div class="product-info">
-      <h3>Vini Black </h3>
-      <p>Pão australiano, hambúrguer 150g, queijo tipo 4 queijos, rúcula, tomate cebola roxa e molho especial</p>
+      <h3>Vini Black</h3>
+      <p>Pão australiano, hambúrguer 150g, queijo tipo 4 queijos, rúcula, tomate, cebola roxa e molho especial</p>
       <div class="price">R$ 19,90</div>
     </div>
   </div>
-<div class="product-card" onclick="window.location.href='pedido.html?lanche=texas-cheddar'">
-    <img src="12.png" alt="Texas Cheddar" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-gourmet'">
+    <img src="12.png" alt="Vini Gourmet" />
     <div class="product-info">
       <h3>Vini Gourmet</h3>
-      <p>Pão de Gergelim, hambúrguer 150g, vinagrete, mussarela e molho especial da casa</p>
+      <p>Pão de gergelim, hambúrguer 150g, vinagrete, mussarela e molho especial da casa</p>
       <div class="price">R$ 19,90</div>
     </div>
   </div>
-
 </div>
 
-<!-- PRODUTOS - Texas Smoker -->
-<div class="products categoria-texas" role="tabpanel">
+<!-- PRODUTOS - Promoções -->
+<div class="products categoria-promocao" role="tabpanel">
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=brisket-burger'">
     <img src="4.png" alt="Brisket Burger" />
     <div class="product-info">
@@ -459,78 +464,84 @@
       <div class="price">R$ 16,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=brisket-burger'">
-    <img src="13.png" alt="Brisket Burger" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-cheddar'">
+    <img src="13.png" alt="Combo Vini Cheddar" />
     <div class="product-info">
-      <h3>Combo Vini cheddar + batata p + refri p
-</h3>
-      <p>Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho</p>
+      <h3>Combo Vini Cheddar + Batata P + Refri P</h3>
+      <p>Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho + batata p + refri p</p>
       <div class="price">R$ 21,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=brisket-burger'">
-    <img src="14.png" alt="Brisket Burger" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-3-texas-smoker'">
+    <img src="14.png" alt="Combo 3 Texas" />
     <div class="product-info">
-      <h3>Combo 3 texas smoker + 1 porção de batata + refri 1l</h3>
-      <p>3 Vini texas smoker 1 porcão de batata refri 1l</p>
+      <h3>Combo 3 Texas Smoker + Batata + Refri 1L</h3>
+      <p>3 Vini Texas Smoker + 1 porção de batata + refri 1L</p>
       <div class="price">R$ 32,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=brisket-burger'">
-    <img src="15.png" alt="Brisket Burger" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-2-vini-dogao'">
+    <img src="15.png" alt="Combo Dogão" />
     <div class="product-info">
-      <h3>Combo: 2 Vini Dogão + batata p + refri 600ml</h3>
-      <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão cremoso, cheddar + batata p + refri 600ml</p>
+      <h3>Combo: 2 Vini Dogão + Batata P + Refri 600ml</h3>
+      <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão, cheddar + batata p + refri</p>
       <div class="price">R$ 29,90</div>
     </div>
   </div>
-
 </div>
 
-<!-- PRODUTOS - Smash -->
+<!-- PRODUTOS - Combos (Smash) -->
 <div class="products categoria-smash" role="tabpanel">
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
-    <img src="16.png" alt="Smash Classic" />
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-bacon'">
+    <img src="16.png" alt="Combo Vini Bacon" />
     <div class="product-info">
       <h3>Combo Vini Bacon - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini Texas bacon + batata p + refrigerante 200ml</p>
       <div class="price">R$ 22,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
-    <img src="17.png" alt="Smash Classic" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-urso'">
+    <img src="17.png" alt="Combo Vini Urso" />
     <div class="product-info">
       <h3>Combo Vini Urso - Lanche + Batata P + Refrigerante P</h3>
-      <p>Vini urso + batata p + refrigerante 200ml</p>
+      <p>Vini Urso + batata p + refrigerante 200ml</p>
       <div class="price">R$ 18,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
     <img src="18.png" alt="Smash Classic" />
     <div class="product-info">
-      <h3>Combo Vini Urso - Lanche + Batata P + Refrigerante P</h3>
+      <h3>Smash Classic</h3>
       <p>Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa</p>
       <div class="price">R$ 18,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
-    <img src="19.png" alt="Smash Classic" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-gourmet'">
+    <img src="19.png" alt="Combo Vini Gourmet" />
     <div class="product-info">
       <h3>Combo Vini Gourmet - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini gourmet + batata p + refrigerante 200ml</p>
       <div class="price">R$ 18,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
-    <img src="20.png" alt="Smash Classic" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-burguer'">
+    <img src="20.png" alt="Combo Vini Burguer" />
     <div class="product-info">
       <h3>Combo Vini Burguer - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini burguer + batata p + refrigerante 200ml</p>
       <div class="price">R$ 18,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=smash-classic'">
-    <img src="21.png" alt="Smash Classic" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-grill'">
+    <img src="21.png" alt="Combo Vini Grill" />
     <div class="product-info">
       <h3>Combo Vini Grill - Lanche + Batata P + Refrigerante P</h3>
       <p>Pão brioche, hambúrguer 150g, queijo, tomate, alface e molho grill</p>
@@ -539,61 +550,66 @@
   </div>
 </div>
 
-<!-- PRODUTOS - Lanches -->
-<div class="products categoria-lanches" role="tabpanel">
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="22.png" alt="Chicken Crispy" />
+<!-- PRODUTOS - Hot Dog (Texas) -->
+<div class="products categoria-texas" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-dogao'">
+    <img src="22.png" alt="Vini Dogão" />
     <div class="product-info">
       <h3>Vini Dogão</h3>
-      <p>Pão 65g, 2 salsicha, pure, maionese verde, batata palha, bacon, requeijão cremoso, cheddar</p>
+      <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão cremoso, cheddar</p>
       <div class="price">R$ 12,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="23.png" alt="Chicken Crispy" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-doguinho'">
+    <img src="23.png" alt="Vini Doguinho" />
     <div class="product-info">
       <h3>Vini Doguinho</h3>
       <p>Pão 65g, 1 salsicha, purê, maionese verde, batata palha, ketchup e mostarda</p>
       <div class="price">R$ 9,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="24.png" alt="Chicken Crispy" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-dog-caramelo'">
+    <img src="24.png" alt="Vini Dog Caramelo" />
     <div class="product-info">
-      <h3>Vini Dog caramelo</h3>
+      <h3>Vini Dog Caramelo</h3>
       <p>Pão de hot dog, 1 salsicha, purê, molho grill, vinagrete e batata palha.</p>
       <div class="price">R$ 14,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="25.png" alt="Chicken Crispy" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-doguinho'">
+    <img src="25.png" alt="Combo Vini Doguinho" />
     <div class="product-info">
-      <h3>Combo Vini Doguinho + batata p + refri p</h3>
-      <p>Pão 65g, 1 salsicha, purê, maionese verde, batata palha, ketchup e mostarda + batata rústica p + refri p</p>
+      <h3>Combo Vini Doguinho + Batata P + Refri P</h3>
+      <p>Combo Vini Doguinho + batata p + refri p</p>
       <div class="price">R$ 18,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="26.png" alt="Chicken Crispy" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-dogao'">
+    <img src="26.png" alt="Combo Vini Dogão" />
     <div class="product-info">
-      <h3>Combo Vini Dogão+ batata p + refri p</h3>
-      <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão cremoso, cheddar + batata rustica p + refri p</p>
+      <h3>Combo Vini Dogão + Batata P + Refri P</h3>
+      <p>Combo Vini Dogão + batata p + refri p</p>
       <div class="price">R$ 20,90</div>
     </div>
   </div>
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=chicken-crispy'">
-    <img src="27.png" alt="Chicken Crispy" />
+
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-vini-dog-caramelo'">
+    <img src="27.png" alt="Combo Vini Dog Caramelo" />
     <div class="product-info">
-      <h3>Combo Vini dog caramelo + batata p + refri p</h3>
-      <p>Pão de hot dog, 1 salsicha, purê, molho grill, vinagrete e batata palha + batata p + refri p</p>
+      <h3>Combo Vini Dog Caramelo + Batata P + Refri P</h3>
+      <p>Combo Vini Dog Caramelo + batata p + refri p</p>
       <div class="price">R$ 20,90</div>
     </div>
   </div>
 </div>
 
 <!-- PRODUTOS - Bebidas -->
-<div class="products categoria-combos" role="tabpanel">
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-classic'">
+<div class="products categoria-bebidas" role="tabpanel">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=refrigerante-lata'">
     <img src="28.png" alt="Refrigerante Lata" />
     <div class="product-info">
       <h3>Refrigerante Lata</h3>
@@ -602,7 +618,7 @@
     </div>
   </div>
 
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-classic'">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=suco-del-valle'">
     <img src="29.png" alt="Suco Del Valle" />
     <div class="product-info">
       <h3>Suco Del Valle</h3>
@@ -611,7 +627,7 @@
     </div>
   </div>
 
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-classic'">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=refrigerante-1l'">
     <img src="30.png" alt="Refrigerante 1 litro" />
     <div class="product-info">
       <h3>Refrigerante 1 litro</h3>
@@ -620,7 +636,7 @@
     </div>
   </div>
 
-  <div class="product-card" onclick="window.location.href='pedido.html?lanche=combo-classic'">
+  <div class="product-card" onclick="window.location.href='pedido.html?lanche=cerveja-long-neck'">
     <img src="31.png" alt="Cerveja Long Neck" />
     <div class="product-info">
       <h3>Cerveja Long Neck</h3>
