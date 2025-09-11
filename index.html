@@ -310,9 +310,9 @@
       <p>Escolha seu estado:</p>
       <select id="estado" aria-label="Selecione seu estado">
         <option value="">Selecione</option>
-        <option value="SP">São Paulo</option>
-        <option value="RJ">Rio de Janeiro</option>
-        <option value="MG">Minas Gerais</option>
+        <option value="PB">Paraíba</option>
+        <option value="PE">Pernambuco</option>
+        <option value="GO">Goiás</option>
         <!-- Adicione outros estados -->
       </select>
       <button id="btn-proximo">Próximo</button>
@@ -335,7 +335,7 @@
   <div id="overlay-loading" style="display:none;">
     <div id="overlay-box-loading" role="dialog" aria-modal="true">
       <h1>Procurando a loja mais próxima...</h1>
-      <p>Procurando a loja mais próxima de você em <strong id="loading-estado-name">São Paulo</strong>...</p>
+      <p>Procurando a loja mais próxima de você em <strong id="loading-estado-name">Paraíba</strong>...</p>
 
       <div class="loading-spinner" aria-hidden="true">
         <div class="arc"></div>
@@ -357,17 +357,17 @@
   <header>
     <img src="logo-texas.png" alt="Logo Hamburgueria Texas" class="logo" />
     <div class="store-info" aria-live="polite">
-      HAMBURGUERIA VINI'S
+      VINI'S BURGUER
     </div>
     <div class="profile-icon" aria-hidden="true"></div>
   </header>
 
   <div class="status" aria-live="polite">
-    aberto até 01:00 • Pedido mín. R$ 6,00
+    Aberto até 01:00 • Pedido mín. R$ 6,00
   </div>
 
   <div class="cashback-banner">
-    5% cashback - compre e ganhe na hora
+    Ative o Cupom e ganhe 10% de Desconto na Primeira Compra 
   </div>
 
   <!-- MENU DE CATEGORIAS -->
@@ -452,6 +452,7 @@
       <div class="price">R$ 15,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-burguer'">
     <img src="32.png" alt="Vini burguer" />
     <div class="product-info">
@@ -460,6 +461,7 @@
       <div class="price">R$ 15,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-junior'">
     <img src="33.png" alt="Vini junior" />
     <div class="product-info">
@@ -468,6 +470,7 @@
       <div class="price">R$ 15,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-bravo'">
     <img src="34.png" alt="Vini bravo" />
     <div class="product-info">
@@ -476,6 +479,7 @@
       <div class="price">R$ 17,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-original'">
     <img src="35.png" alt="Vini original" />
     <div class="product-info">
@@ -484,6 +488,7 @@
       <div class="price">R$ 15,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-chicken'">
     <img src="36.png" alt="Vini chicken" />
     <div class="product-info">
@@ -492,12 +497,13 @@
       <div class="price">R$ 15,90</div>
     </div>
   </div>
+
   <div class="product-card" onclick="window.location.href='pedido.html?lanche=vini-double-urso'">
     <img src="37.png" alt="Vini double urso" />
     <div class="product-info">
       <h3>Vini Double Urso</h3>
       <p>Pão australiano, 2 hamburguer 150 gr, bacon, cheddar, mussarela, molho especial e cebola crispy (crocante).</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 </div>
@@ -509,7 +515,7 @@
     <div class="product-info">
       <h3>Vini Brisket Burger</h3>
       <p>Pão brioche, brisket defumado, queijo cheddar, picles e molho barbecue</p>
-      <div class="price">R$ 17,90</div>
+      <div class="price">R$ 14,90</div>
     </div>
   </div>
 
@@ -518,7 +524,7 @@
     <div class="product-info">
       <h3>Combo Vini Cheddar + Batata P + Refri P</h3>
       <p>Pão australiano, hambúrguer 150g, cebola crispy, cheddar e molho + batata p + refri p</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 15,90</div>
     </div>
   </div>
 
@@ -527,7 +533,7 @@
     <div class="product-info">
       <h3>Combo 3 Vini Smoker + Batata + Refri 1L</h3>
       <p>3 Vini Texas Smoker + 1 porção de batata + refri 1L</p>
-      <div class="price">R$ 39,90</div>
+      <div class="price">R$ 24,90</div>
     </div>
   </div>
 
@@ -536,7 +542,7 @@
     <div class="product-info">
       <h3>Combo: 2 Vini Dogão + Batata P + Refri 600ml</h3>
       <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão, cheddar + batata p + refri</p>
-      <div class="price">R$ 24,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 </div>
@@ -548,7 +554,7 @@
     <div class="product-info">
       <h3>Combo Vini Bacon - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini Texas bacon + batata p + refrigerante 200ml</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 
@@ -557,7 +563,7 @@
     <div class="product-info">
       <h3>Combo Vini Urso - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini Urso + batata p + refrigerante 200ml</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 
@@ -566,7 +572,7 @@
     <div class="product-info">
       <h3>Smash Classic</h3>
       <p>Pão brioche, hambúrguer smash 100g, queijo prato e maionese da casa</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 
@@ -575,7 +581,7 @@
     <div class="product-info">
       <h3>Combo Vini Gourmet - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini gourmet + batata p + refrigerante 200ml</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 
@@ -584,7 +590,7 @@
     <div class="product-info">
       <h3>Combo Vini Burguer - Lanche + Batata P + Refrigerante P</h3>
       <p>Vini burguer + batata p + refrigerante 200ml</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 
@@ -593,7 +599,7 @@
     <div class="product-info">
       <h3>Combo Vini Grill - Lanche + Batata P + Refrigerante P</h3>
       <p>Pão brioche, hambúrguer 150g, queijo, tomate, alface e molho grill</p>
-      <div class="price">R$ 21,90</div>
+      <div class="price">R$ 18,90</div>
     </div>
   </div>
 </div>
@@ -605,7 +611,7 @@
     <div class="product-info">
       <h3>Vini Dogão</h3>
       <p>Pão 65g, 2 salsichas, purê, maionese verde, batata palha, bacon, requeijão cremoso, cheddar</p>
-      <div class="price">R$ 14,90</div>
+      <div class="price">R$ 12,90</div>
     </div>
   </div>
 
@@ -614,7 +620,7 @@
     <div class="product-info">
       <h3>Vini Doguinho</h3>
       <p>Pão 65g, 1 salsicha, purê, maionese verde, batata palha, ketchup e mostarda</p>
-      <div class="price">R$ 12,90</div>
+      <div class="price">R$ 10,90</div>
     </div>
   </div>
 
@@ -623,7 +629,7 @@
     <div class="product-info">
       <h3>Vini Dog Caramelo</h3>
       <p>Pão de hot dog, 1 salsicha, purê, molho grill, vinagrete e batata palha.</p>
-      <div class="price">R$ 14,90</div>
+      <div class="price">R$ 12,90</div>
     </div>
   </div>
 
@@ -632,7 +638,7 @@
     <div class="product-info">
       <h3>Combo Vini Doguinho + Batata P + Refri P</h3>
       <p>Combo Vini Doguinho + batata p + refri p</p>
-      <div class="price">R$ 18,90</div>
+      <div class="price">R$ 14,90</div>
     </div>
   </div>
 
@@ -641,7 +647,7 @@
     <div class="product-info">
       <h3>Combo Vini Dogão + Batata P + Refri P</h3>
       <p>Combo Vini Dogão + batata p + refri p</p>
-      <div class="price">R$ 19,90</div>
+      <div class="price">R$ 14,90</div>
     </div>
   </div>
 
@@ -650,7 +656,7 @@
     <div class="product-info">
       <h3>Combo Vini Dog Caramelo + Batata P + Refri P</h3>
       <p>Combo Vini Dog Caramelo + batata p + refri p</p>
-      <div class="price">R$ 19,90</div>
+      <div class="price">R$ 14,90</div>
     </div>
   </div>
 </div>
@@ -702,7 +708,7 @@
   </div>
 </div>
 
-  <!-- Menu inferior -->
+<!-- Menu inferior -->
 <nav class="bottom-nav" role="navigation" aria-label="Menu inferior">
   <a class="nav-item" data-link="index.html" aria-label="Início">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -733,19 +739,14 @@
     <span>Carrinho</span>
   </a>
 </nav>
-</div>
-</div>
 
 <script>
-  // Controle de categorias
   const navLinks = document.querySelectorAll("nav a");
   const categorias = document.querySelectorAll(".products");
 
   navLinks.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
-
-      // Controle de ativo visual e acessibilidade
       navLinks.forEach(l => {
         l.classList.remove("active");
         l.setAttribute("aria-selected", "false");
@@ -755,26 +756,17 @@
       link.setAttribute("aria-selected", "true");
       link.setAttribute("tabindex", "0");
       link.focus();
-
-      // Controle de categorias
       categorias.forEach(div => div.classList.remove("active"));
       const categoria = link.getAttribute("data-categoria");
       const divSelecionada = document.querySelector(".categoria-" + categoria);
-      if (divSelecionada) {
-        divSelecionada.classList.add("active");
-      }
-
-      // Redirecionamento correto
+      if (divSelecionada) divSelecionada.classList.add("active");
       const destino = link.getAttribute("data-link");
-      if (destino) {
-        window.location.href = destino;
-      }
+      if (destino) window.location.href = destino;
     });
   });
 
-  // Marcar automaticamente a aba correta ao carregar a página
   const navItems = document.querySelectorAll(".bottom-nav .nav-item");
-  const currentPage = window.location.pathname.split("/").pop(); // ex: 'index.html'
+  const currentPage = window.location.pathname.split("/").pop();
   navItems.forEach(item => {
     if (item.getAttribute("data-link") === currentPage) {
       item.classList.add("active");
@@ -787,17 +779,15 @@
     }
   });
 
-  // Dados de cidades por estado
   const cidadesPorEstado = {
-    SP: ["São Paulo", "Campinas", "Santos", "Guarulhos"],
-    RJ: ["Rio de Janeiro", "Niterói", "Petrópolis", "Volta Redonda"],
-    MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora"]
+    PB: ["João Pessoa", "Campina Grande", "Patos", "Sousa"],
+    PE: ["Recife", "Olinda", "Caruaru", "Petrolina"],
+    GO: ["Goiânia", "Anápolis", "Rio Verde", "Aparecida de Goiânia"]
   };
-
   const nomesEstados = {
-    SP: "São Paulo",
-    RJ: "Rio de Janeiro",
-    MG: "Minas Gerais"
+    PB: "Paraíba",
+    PE: "Pernambuco",
+    GO: "Goiás"
   };
 
   const selectEstado = document.getElementById("estado");
